@@ -1,12 +1,10 @@
 # Read about factories at https://github.com/thoughtbot/factory_girl
 
 FactoryGirl.define do
-  factory :square do
-    x 1
-    y 1
-    state "empty"
+  factory :ship do
     board_id 1
-    
-    association :board
+    type ""
+    square_id 1
+    state "MyString"
   end
 end
