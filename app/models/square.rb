@@ -3,4 +3,5 @@ class Square < ActiveRecord::Base
   validates :state, :inclusion => { :in => ["empty", "taken", "hit"] }
 
   belongs_to :board
+  has_one :ship
 end

@@ -3,8 +3,11 @@
 FactoryGirl.define do
   factory :ship do
     board_id 1
-    type ""
+    type "battleship"
     square_id 1
-    state "MyString"
+    state "unset"
+
+    association :board
+    association :square
   end
 end
