@@ -2,6 +2,7 @@ class Board < ActiveRecord::Base
   has_many :squares
   has_many :ships
   belongs_to :game
+  belongs_to :player
 
   after_create :setup
 

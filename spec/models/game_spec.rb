@@ -7,6 +7,10 @@ describe Game do
     expect(game).to be_valid
   end
 
+  it "has two players" do
+    expect(game.players.length).to eq(2)
+  end
+
   it "has two boards" do
     expect(game.boards.length).to eq(2)
   end
