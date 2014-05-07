@@ -66,4 +66,31 @@ describe Ship do
     ship.state = "dead"
     expect(ship).to_not be_valid
   end
+
+  describe "length" do
+    it "is length five when type is aircraft carrier" do
+      ship.type = "aircraft carrier"
+      expect(ship.length).to equal(5)
+    end
+
+    it "is length four when type is battleship" do
+      ship.type = "battleship"
+      expect(ship.length).to equal(4)
+    end
+
+    it "is length three when type is submarine" do
+      ship.type = "submarine"
+      expect(ship.length).to equal(3)
+    end
+
+    it "is length three when type is destroyer" do
+      ship.type = "destroyer"
+      expect(ship.length).to equal(3)
+    end
+
+    it "is length two when type is patrol boat" do
+      ship.type = "patrol boat"
+      expect(ship.length).to equal(2)
+    end
+  end
 end

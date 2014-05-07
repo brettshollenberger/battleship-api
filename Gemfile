@@ -13,6 +13,7 @@ gem 'guard-rspec'
 gem 'factory_girl_rails'
 gem 'launchy'
 gem 'capybara'
+gem 'state_machine'
 
 group :doc do
   # bundle exec rake doc:rails generates the API under doc/api.
