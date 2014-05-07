@@ -3,7 +3,7 @@
 FactoryGirl.define do
   factory :ship do
     board_id 1
-    type "battleship"
+    kind "battleship"
     square_id 1
     state "unset"
 
