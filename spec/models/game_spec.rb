@@ -74,7 +74,24 @@ describe Game do
       @player1.name = "Brett"
       @player2.name = "Tag"
       expect(@game.controls).to include({rel: "edit",
-                            association: @game.players.first.board_for(@game).ships.first})
+                            association: @player1.board_for(@game).ships.first})
+
+      expect(@game.controls).to_not include({rel: "edit",
+                            association: @player2.board_for(@game).ships.first})
+    end
+
+    it "has controls to set P2's ships after the P1's ships are set" do
+      @player1.name = "Brett"
+      @player2.name = "Tag"
+      @player1.board_for(@game).ships.each do |ship|
+        ship.set
+      end
+
+      expect(@game.controls).to_not include({rel: "edit",
+                            association: @player1.board_for(@game).ships.first})
+
+      expect(@game.controls).to include({rel: "edit",
+                            association: @player2.board_for(@game).ships.first})
     end
   end
 end

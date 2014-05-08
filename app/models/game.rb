@@ -54,10 +54,12 @@ class Game < ActiveRecord::Base
   end
 
   def set_ship_controls
-    players.each do |player|
-      player.board_for(self).ships.each do |ship|
-        @private_controls << edit_association_control(ship)
-      end
+    player = players.find(turn)
+    ships  = player.board_for(self).ships
+    return toggle_turn && set_ship_controls if ships.set?
+
+    ships.each do |ship|
+      @private_controls << edit_association_control(ship)
     end
   end
 

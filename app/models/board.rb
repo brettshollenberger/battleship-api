@@ -1,8 +1,12 @@
 class Board < ActiveRecord::Base
-  has_many :squares
-  has_many :ships
   belongs_to :game
   belongs_to :player
+  has_many :squares
+  has_many :ships do
+    def set?
+      self.all? { |ship| ship.set? }
+    end
+  end
 
   after_create :setup
 

@@ -8,27 +8,12 @@ class Ship < ActiveRecord::Base
 
   validates :state, :inclusion => { :in => ["unset", "set", "hit", "sunk"] }
 
-  state_machine :state, :initial => :unset do
-    before_transition :unset => :set do |ship|
-      ship.square.state = "taken"
-    end
+  def set
+    write_attribute(:state, "set") && save
+  end
 
-    before_transition :set => :hit do |ship|
-      ship.square.state = "hit"
-    end
-
-    event :set do
-      transition :unset => :set
-    end
-
-    event :hit do
-      transition :set => :hit
-    end
-
-    state :unset
-    state :set
-    state :hit
-    state :sunk
+  def set?
+    state == "set"
   end
 
   state_machine :kind do
