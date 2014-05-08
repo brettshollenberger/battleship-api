@@ -1,8 +1,12 @@
 class Game < ActiveRecord::Base
+  attr_accessor :private_controls
+
   has_many :boards
-  has_and_belongs_to_many :players
-  validates :phase, :inclusion => { :in => ["setup_players", "setup_ships", "play", 
-                                            "complete"] }
+  has_and_belongs_to_many :players do
+    def setup?
+      self.all? { |player| player.setup? }
+    end
+  end
 
   state_machine :phase, :initial => :setup_players do
     state :setup_players
@@ -14,37 +18,65 @@ class Game < ActiveRecord::Base
   after_create :setup
 
   def setup
-    setup_players
-    setup_boards
-    setup_turn
-  end
-
-  def default_controls
-    [{rel: "post", item: "game"}]
+    initialize_players
+    initialize_boards
+    initialize_turn
   end
 
   def merged_controls(controls)
     (default_controls << controls).flatten
   end
 
+  def sync_phase
+    write_attribute(:phase, "setup_ships") if players.setup?
+  end
+
   def controls
-    players.each do |player|
-      return merged_controls([{rel: "edit", association: player}]) unless player.setup?
+    sync_phase
+    set_controls
+    @private_controls
+  end
+
+  def set_controls
+    set_default_controls
+    set_player_controls if phase == "setup_players"
+    set_ship_controls if phase == "setup_ships"
+  end
+
+  def set_default_controls
+    @private_controls = [{rel: "post", item: "game"}]
+  end
+
+  def set_player_controls
+    players.each do |player| 
+      @private_controls << edit_association_control(player) unless player.setup?
     end
   end
 
-  def setup_players
+  def set_ship_controls
+    players.each do |player|
+      player.board_for(self).ships.each do |ship|
+        @private_controls << edit_association_control(ship)
+      end
+    end
+  end
+
+  def edit_association_control(association)
+    {rel: "edit", association: association}
+  end
+
+  def initialize_players
     2.times do |n|
       @p = Player.create
       @gp = GamesPlayers.create(game: self, player: @p)
     end
   end
 
-  def setup_boards
+  def initialize_boards
     players.each { |p| boards.create(player: p, game: self) }
   end
 
-  def setup_turn
+  def initialize_turn
     write_attribute(:turn, players.first.id)
   end
 
