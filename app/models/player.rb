@@ -5,4 +5,8 @@ class Player < ActiveRecord::Base
   def board_for(game)
     boards.where(game: game).first
   end
+
+  def setup?
+    return !name.blank?
+  end
 end

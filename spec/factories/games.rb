@@ -2,6 +2,6 @@
 
 FactoryGirl.define do
   factory :game do
-    phase "setting_ships"
+    phase "setup_players"
   end
 end
