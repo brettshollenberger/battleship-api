@@ -37,12 +37,20 @@ class Game < ActiveRecord::Base
   end
 
   def sync
+    self.players.reload
+    self.boards.reload
+    self.squares.reload
     sync_phase
   end
 
   def sync_phase
-    update_attribute(:phase, "setup_ships") if setup_ship_phase?
-    update_attribute(:phase, "play")        if play_phase?
+    update_attribute(:phase, "setup_players") if setup_player_phase?
+    update_attribute(:phase, "setup_ships")   if setup_ship_phase?
+    update_attribute(:phase, "play")          if play_phase?
+  end
+
+  def setup_player_phase?
+    !players || !players.setup?
   end
 
   def setup_ship_phase?
@@ -54,7 +62,7 @@ class Game < ActiveRecord::Base
   end
 
   def controls
-    sync_phase
+    sync
     set_controls
     @private_controls
   end
@@ -72,6 +80,7 @@ class Game < ActiveRecord::Base
 
   def set_player_controls
     players.each do |player| 
+      puts player.setup?
       @private_controls << edit_association_control(player) unless player.setup?
     end
   end
