@@ -18,7 +18,7 @@ class Board < ActiveRecord::Base
   def setup_squares
     ("A".."J").each do |l|
       (1..10).each do |n|
-        squares.create(x: n, y: l)
+        squares.create(x: n, y: l, game: game)
       end
     end
   end

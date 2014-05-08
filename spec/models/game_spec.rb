@@ -61,37 +61,61 @@ describe Game do
       expect(@game.controls).to include({rel: "post", item: "game"})
     end
 
-    it "has an initial control to setup the first player" do
-      expect(@game.controls).to include({rel: "edit", association: @game.players.first})
-    end
-
-    it "has a control to setup the second player after the first player is setup" do
-      @game.players.first.name = "Brett"
-      expect(@game.controls).to include({rel: "edit", association: @game.players.last})
-    end
-
-    it "has controls to set the first player's ships after both players are setup" do
-      @player1.name = "Brett"
-      @player2.name = "Tag"
-      expect(@game.controls).to include({rel: "edit",
-                            association: @player1.board_for(@game).ships.first})
-
-      expect(@game.controls).to_not include({rel: "edit",
-                            association: @player2.board_for(@game).ships.first})
-    end
-
-    it "has controls to set P2's ships after the P1's ships are set" do
-      @player1.name = "Brett"
-      @player2.name = "Tag"
-      @player1.board_for(@game).ships.each do |ship|
-        ship.set
+    describe "setup players phase" do
+      it "has an initial control to setup the first player" do
+        expect(@game.controls).to include({rel: "edit", association: @game.players.first})
       end
 
-      expect(@game.controls).to_not include({rel: "edit",
-                            association: @player1.board_for(@game).ships.first})
+      it "has a control to setup the second player after the first player is setup" do
+        @game.players.first.name = "Brett"
+        expect(@game.controls).to include({rel: "edit", association: @game.players.last})
+      end
+    end
 
-      expect(@game.controls).to include({rel: "edit",
-                            association: @player2.board_for(@game).ships.first})
+    describe "setup ships phase" do
+      before(:each) do
+        @player1.name = "Brett"
+        @player2.name = "Tag"
+      end
+
+      it "has controls to set the first player's ships after both players are setup" do
+        expect(@game.controls).to include({rel: "edit",
+                              association: @player1.board_for(@game).ships.first})
+
+        expect(@game.controls).to_not include({rel: "edit",
+                              association: @player2.board_for(@game).ships.first})
+      end
+
+      it "has controls to set P2's ships after the P1's ships are set" do
+        @player1.board_for(@game).ships.each(&:set)
+
+        expect(@game.controls).to include({rel: "edit",
+                              association: @player2.board_for(@game).ships.first})
+
+        expect(@game.controls).to_not include({rel: "edit",
+                              association: @player1.board_for(@game).ships.first})
+      end
+    end
+
+    describe "play phase" do
+      before(:each) do
+        @player1.name = "Brett"
+        @player2.name = "Tag"
+        @player1.board_for(@game).ships.each(&:set)
+        @player2.board_for(@game).ships.each(&:set)
+      end
+
+      it "has a control for P1 to fire a shot on P2's board after the ships are set" do
+        expect(@game.controls).to include({rel: "edit",
+                                   association: @player2.board_for(@game).squares.first})
+      end
+
+      it "has a control for P2 to fire a shot after P1's turn" do
+        @square = @player2.board_for(@game).squares.first
+        @player1.fire(@square) && @game.toggle_turn
+        expect(@game.controls).to include({rel: "edit",
+                                   association: @player1.board_for(@game).squares.first})
+      end
     end
   end
 end

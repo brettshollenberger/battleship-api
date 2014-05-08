@@ -2,6 +2,7 @@ class Game < ActiveRecord::Base
   attr_accessor :private_controls
 
   has_many :boards
+  has_many :squares
   has_and_belongs_to_many :players do
     def setup?
       self.all? { |player| player.setup? }
@@ -13,6 +14,8 @@ class Game < ActiveRecord::Base
     state :setup_ships
     state :play
     state :complete
+
+    after_transition :on => :play, :do => :toggle_turn
   end
 
   after_create :setup
@@ -27,8 +30,27 @@ class Game < ActiveRecord::Base
     (default_controls << controls).flatten
   end
 
+  def ships
+    ships = []
+    boards.each { |b| ships << b.ships }
+    ships.flatten
+  end
+
+  def sync
+    sync_phase
+  end
+
   def sync_phase
-    write_attribute(:phase, "setup_ships") if players.setup?
+    update_attribute(:phase, "setup_ships") if setup_ship_phase?
+    update_attribute(:phase, "play")        if play_phase?
+  end
+
+  def setup_ship_phase?
+    players.setup? && ships.any?(&:unset?)
+  end
+
+  def play_phase?
+    ships.all?(&:set?)
   end
 
   def controls
@@ -41,6 +63,7 @@ class Game < ActiveRecord::Base
     set_default_controls
     set_player_controls if phase == "setup_players"
     set_ship_controls if phase == "setup_ships"
+    set_turn_controls if phase == "play"
   end
 
   def set_default_controls
@@ -63,6 +86,15 @@ class Game < ActiveRecord::Base
     end
   end
 
+  def set_turn_controls
+    player  = players.find(not_turn)
+    squares = player.board_for(self).squares.reject(&:guessed?)
+
+    squares.each do |square|
+      @private_controls << edit_association_control(square)
+    end
+  end
+
   def edit_association_control(association)
     {rel: "edit", association: association}
   end
@@ -79,10 +111,14 @@ class Game < ActiveRecord::Base
   end
 
   def initialize_turn
-    write_attribute(:turn, players.first.id)
+    update_attribute(:turn, players.first.id)
   end
 
   def toggle_turn
-    write_attribute :turn, turn == players.first.id ? players.second.id : players.first.id
+    update_attribute :turn, turn == players.first.id ? players.second.id : players.first.id
+  end
+
+  def not_turn
+    turn == players.first.id ? players.second.id : players.first.id
   end
 end

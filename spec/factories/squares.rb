@@ -6,7 +6,8 @@ FactoryGirl.define do
     y 1
     state "empty"
     board_id 1
-    
+
     association :board
+    association :game
   end
 end

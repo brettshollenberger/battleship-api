@@ -8,6 +8,14 @@ class Ship < ActiveRecord::Base
 
   validates :state, :inclusion => { :in => ["unset", "set", "hit", "sunk"] }
 
+  def unset
+    write_attribute(:state, "unset") && save
+  end
+
+  def unset?
+    state == "unset"
+  end
+
   def set
     write_attribute(:state, "set") && save
   end

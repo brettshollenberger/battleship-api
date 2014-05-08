@@ -6,7 +6,19 @@ class Player < ActiveRecord::Base
     boards.where(game: game).first
   end
 
+  def ships_for(game)
+    board_for(game).ships
+  end
+
   def setup?
     return !name.blank?
+  end
+
+  def turn?(game)
+    game.turn == self.id
+  end
+
+  def fire(square)
+    square.fire if turn?(square.game)
   end
 end
