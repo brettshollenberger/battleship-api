@@ -133,10 +133,10 @@ class Game < ActiveRecord::Base
   end
 
   def toggle_turn
-    update_attribute :turn, turn == players.first.id ? players.second.id : players.first.id
+    update_attribute :turn, turn == players.first.id ? players.last.id : players.first.id
   end
 
   def not_turn
-    turn == players.first.id ? players.second.id : players.first.id
+    turn == players.first.id ? players.last.id : players.first.id
   end
 end
