@@ -14,8 +14,6 @@ class Game < ActiveRecord::Base
     state :setup_ships
     state :play
     state :complete
-
-    after_transition :on => :play, :do => :toggle_turn
   end
 
   after_create :setup
@@ -80,9 +78,20 @@ class Game < ActiveRecord::Base
 
   def set_player_controls
     players.each do |player| 
-      puts player.setup?
       @private_controls << edit_association_control(player) unless player.setup?
     end
+  end
+
+  def updatable_players
+    players.where(id: turn)
+  end
+
+  def updatable_ships
+    players.find(turn).board_for(self).ships.reject(&:set?)
+  end
+
+  def updatable_squares
+    players.find(not_turn).board_for(self).squares.reject(&:hit?).reject(&:guessed?)
   end
 
   def set_ship_controls

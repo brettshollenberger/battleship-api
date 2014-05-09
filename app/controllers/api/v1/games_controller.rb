@@ -5,10 +5,17 @@ module Api
       respond_to :json
 
       def create
-        @g = Game.create
-        respond_to do |format|
-          format.json { render :json => @g.controls }
-        end
+        @game = Game.create
+        render "show", status: :created
+      end
+
+      def show
+        @game = Game.find(params[:id])
+      end
+
+    private
+      def created
+        { :json => @game.to_json, status: :created, location: api_v1_game_url(@game) }
       end
     end
   end
