@@ -60,6 +60,25 @@ describe "Players API :" do
           expect(json["message"]).to eq("It is not that player's turn.")
         end
       end
+
+      describe "After both players have set their names :" do
+        before(:each) do
+          put api_v1_game_player_path(@game, @p1), player_json
+          put api_v1_game_player_path(@game, @p2), player_json
+        end
+
+        it "is a successful request" do
+          expect(response).to be_success
+        end
+
+        it "returns a 200" do
+          expect(response.status).to eq(200)
+        end
+
+        it "switches turns to the other player" do
+          expect(json).to eq("")
+        end
+      end
     end
   end
 end
