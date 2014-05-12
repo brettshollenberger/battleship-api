@@ -66,4 +66,58 @@ describe "Players API :" do
       end
     end
   end
+
+  describe "Update Action :" do
+    def update_player_json
+      { :format => :json, :player => { :name => "Brett" } }
+    end
+
+    describe "When it is the Player's Turn" do
+      before(:each) do
+        @game   = FactoryGirl.create(:game)
+        @board  = @game.boards.first
+        @player = @board.player
+
+        put api_v1_game_player_url(@game, @player), update_player_json
+      end
+
+      it "is a successful request" do
+        expect(response).to be_success
+      end
+
+      it "returns a 200" do
+        expect(response.status).to eq(200)
+      end
+
+      it "responds with the updated player" do
+        expect(json["name"]).to eq("Brett")
+      end
+
+      it "responds with the available actions" do
+        expect(json["actions"][0]["prompt"]).to eq("Choose a name for Player 2")
+      end
+    end
+
+    describe "When it is not the player's turn" do
+      before(:each) do
+        @game   = FactoryGirl.create(:game)
+        @board  = @game.boards.last
+        @player = @board.player
+
+        put api_v1_game_player_url(@game, @player), update_player_json
+      end
+
+      it "is not a successful request" do
+        expect(response).to_not be_success
+      end
+
+      it "returns a forbidden status code" do
+        expect(response.status).to eq(403)
+      end
+
+      it "returns an error message" do
+        expect(json["message"]).to eq("It is not that player's turn.")
+      end
+    end
+  end
 end
