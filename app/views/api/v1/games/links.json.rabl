@@ -1,7 +1,7 @@
 node(:links) do |game|
   @links = [{
     :href => api_v1_game_path(game),
-    :rel  => "get"
+    :rel  => "self"
   }]
 
   @links

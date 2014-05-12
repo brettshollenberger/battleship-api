@@ -39,28 +39,5 @@ describe "Games API :" do
       expect(json["players"][1]["links"][0]["rel"]).to eq("get")
       expect(json["players"][1]["links"].length).to eq(1)
     end
-
-    # it "returns a link to the collection of games" do
-      # expect(json["collection"]["href"]).to eq(api_v1_games_path)
-    # end
-
-    # it "returns the game's phase attribute" do
-      # expect(json["collection"]["items"][0]["data"][0]["name"]).to eq("id")
-      # expect(json["collection"]["items"][0]["data"][0]["prompt"]).to eq("Id")
-    # end
-
-    # it "returns the game's phase attribute" do
-      # expect(json["collection"]["items"][0]["data"][1]["name"]).to eq("phase")
-      # expect(json["collection"]["items"][0]["data"][1]["value"]).to eq("setup_players")
-      # expect(json["collection"]["items"][0]["data"][1]["prompt"]).to eq("Phase")
-    # end
-
-    # it "returns the game's players association" do
-      # expect(json["collection"]).to eq("phase")
-    # end
-
-    # it "creates a new game, with hypermedia to edit the first player" do
-      # expect(json["links"]["players"].length).to eq(1)
-    # end
   end
 end

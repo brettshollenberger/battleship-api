@@ -5,6 +5,7 @@ describe "Boards API :" do
     before(:each) do
       @game   = FactoryGirl.create(:game)
       @board  = @game.boards.first
+      @p1     = @board.player
       @square = @board.squares.first
 
       get api_v1_board_path(@board)
@@ -14,44 +15,25 @@ describe "Boards API :" do
       expect(response).to be_success
     end
 
-    # it "returns the square's href" do
-    #   expect(json["href"]).to eq(api_v1_board_square_path(@board, @square))
-    # end
+    it "returns a link to the board" do
+      expect(json["links"][0]["href"]).to eq(api_v1_board_path(@board))
+      expect(json["links"][0]["rel"]).to eq("self")
+    end
 
-    # it "returns the square's id" do
-    #   expect(json["id"]).to eq(@square.id)
-    # end
+    it "returns the board's id" do
+      expect(json["id"]).to eq(@board.id)
+    end
 
-    # it "returns the square's x coordinate" do
-    #   expect(json["x"]).to eq(@square.x)
-    # end
+    it "returns the board's squares" do
+      expect(json["squares"][0]["links"][0]["href"]).to eq(api_v1_board_square_path(@board, @square))
+    end
 
-    # it "returns the square's y coordinate" do
-    #   expect(json["y"]).to eq(@square.y)
-    # end
+    it "returns the board's game" do
+      expect(json["game"]["links"][0]["href"]).to eq(api_v1_game_path(@game))
+    end
 
-    # it "returns the square's state" do
-    #   expect(json["state"]).to eq(@square.state)
-    # end
-
-    # it "returns the square's board_id" do
-    #   expect(json["board_id"]).to eq(@square.board_id)
-    # end
-
-    # it "returns the square's game_id" do
-    #   expect(json["game_id"]).to eq(@square.game_id)
-    # end
-
-    # describe "links" do
-    #   it "returns a link to the square's board" do
-    #     expect(json["board"]["links"][0]["rel"]).to eq("get")
-    #     expect(json["board"]["links"][0]["href"]).to eq(api_v1_board_path(@board))
-    #   end
-
-    #   it "returns a link to the square's game" do
-    #     expect(json["game"]["links"][0]["rel"]).to eq("get")
-    #     expect(json["game"]["links"][0]["href"]).to eq(api_v1_game_path(@game))
-    #   end
-    # end
+    it "returns the board's player" do
+      expect(json["player"]["links"][0]["href"]).to eq(api_v1_game_player_path(@game, @p1))
+    end
   end
 end

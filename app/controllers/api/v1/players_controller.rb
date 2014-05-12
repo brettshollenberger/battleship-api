@@ -18,8 +18,9 @@ module Api
       end
 
       def show
-        @players = Player.where(id: params[:id])
-        @game    = Game.find(params[:game_id])
+        @player = Player.find(params[:id])
+        @game   = Game.find(params[:game_id])
+        @board  = @player.board_for(@game)
       end
 
     private

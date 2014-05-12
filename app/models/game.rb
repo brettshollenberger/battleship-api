@@ -139,4 +139,8 @@ class Game < ActiveRecord::Base
   def not_turn
     turn == players.first.id ? players.last.id : players.first.id
   end
+
+  def other_player(player)
+    self.players.map { |p| p unless p == player }.compact.first
+  end
 end

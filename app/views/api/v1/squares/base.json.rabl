@@ -1,6 +1,6 @@
-node(:href) { |n| api_v1_board_square_path(@board, @square) }
+extends "api/v1/squares/links"
 
-attributes :id, :x, :y, :state, :board_id, :game_id
+attributes :id, :x, :y, :state
 
 child(:board) do
   extends "api/v1/boards/links"
