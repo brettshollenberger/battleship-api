@@ -22,5 +22,10 @@ module Battleship
     config.generators do |g|
       g.test_framework :rspec
     end
+
+    Rabl.configure do |config|
+      config.include_json_root  = false
+      config.include_child_root = false
+    end
   end
 end

@@ -4,6 +4,10 @@ Battleship::Application.routes.draw do
       resources :games do
         resources :players, only: [:index, :show, :update]
       end
+
+      resources :boards do
+        resources :squares, only: [:index, :show, :update]
+      end
     end
   end
 end

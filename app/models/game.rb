@@ -83,7 +83,7 @@ class Game < ActiveRecord::Base
   end
 
   def updatable_players
-    players.where(id: turn)
+    setup_player_phase? ? players.where(id: turn) : []
   end
 
   def updatable_ships

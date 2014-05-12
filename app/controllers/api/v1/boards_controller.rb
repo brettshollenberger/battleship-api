@@ -1,6 +1,6 @@
 module Api
   module V1
-    class GamesController < ApplicationController
+    class BoardsController < ApplicationController
       skip_before_filter :verify_authenticity_token
       respond_to :json
 
@@ -11,7 +11,10 @@ module Api
       end
 
       def show
-        @game = Game.find(params[:id])
+        @board   = Board.find(params[:id])
+        @game    = @board.game
+        @player  = @board.player
+        @squares = @board.squares
       end
 
     private

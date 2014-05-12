@@ -1,17 +1,17 @@
 module Api
   module V1
-    class GamesController < ApplicationController
+    class SquaresController < ApplicationController
       skip_before_filter :verify_authenticity_token
       respond_to :json
 
       def create
-        @game  = Game.create
-        @games = [@game]
-        render "show", status: :created
       end
 
       def show
-        @game = Game.find(params[:id])
+        @square = Square.find(params[:id])
+        @board  = @square.board
+        @game   = @board.game
+        @player = @board.player
       end
 
     private
