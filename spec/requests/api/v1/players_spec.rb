@@ -7,7 +7,7 @@ describe "Players API :" do
       @board  = @game.boards.first
       @player = @board.player
 
-      get api_v1_game_player_path(@game, @player)
+      get api_v1_game_player_url(@game, @player)
     end
 
     it "is a successful request" do
@@ -23,23 +23,23 @@ describe "Players API :" do
     end
 
     it "returns the player's board for the game" do
-      expect(json["board"]["links"][0]["href"]).to eq(api_v1_board_path(@board))
+      expect(json["board"]["links"][0]["href"]).to eq(api_v1_board_url(@board))
     end
 
     it "returns a link to the game" do
-      expect(json["game"]["links"][0]["href"]).to eq(api_v1_game_path(@game))
+      expect(json["game"]["links"][0]["href"]).to eq(api_v1_game_url(@game))
     end
 
     describe "During Setup Player Phase" do
       describe "When it is the player's turn" do
         it "returns a link to get the player" do
           expect(json["links"][0]["rel"]).to eq("self")
-          expect(json["links"][0]["href"]).to eq(api_v1_game_player_path(@game, @player))
+          expect(json["links"][0]["href"]).to eq(api_v1_game_player_url(@game, @player))
         end
 
         it "returns a link to edit the player's name" do
           expect(json["links"][1]["rel"]).to eq("edit")
-          expect(json["links"][1]["href"]).to eq(api_v1_game_player_path(@game, @player))
+          expect(json["links"][1]["href"]).to eq(api_v1_game_player_url(@game, @player))
           expect(json["links"][1]["prompt"]).to eq("Choose a name for Player 1")
         end
       end
@@ -52,12 +52,12 @@ describe "Players API :" do
           @board = @game.boards.last
           @p2    = @board.player
 
-          get api_v1_game_player_path(@game, @player)
+          get api_v1_game_player_url(@game, @player)
         end
 
         it "returns a link to get the player" do
           expect(json["links"][0]["rel"]).to eq("self")
-          expect(json["links"][0]["href"]).to eq(api_v1_game_player_path(@game, @player))
+          expect(json["links"][0]["href"]).to eq(api_v1_game_player_url(@game, @player))
         end
 
         it "does not return a link to to edit the player's name" do

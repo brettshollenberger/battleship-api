@@ -8,7 +8,7 @@ describe "Ships API :" do
       @player = @board.player
       @ship   = @board.ships.first
 
-      get api_v1_board_ship_path(@board, @ship)
+      get api_v1_board_ship_url(@board, @ship)
     end
 
     it "is a successful request" do
@@ -16,7 +16,7 @@ describe "Ships API :" do
     end
 
     it "returns the ship's self link" do
-      expect(json["links"][0]["href"]).to eq(api_v1_board_ship_path(@board, @ship))
+      expect(json["links"][0]["href"]).to eq(api_v1_board_ship_url(@board, @ship))
       expect(json["links"][0]["rel"]).to eq("self")
     end
 
@@ -33,17 +33,17 @@ describe "Ships API :" do
     end
 
     it "returns the ship's board" do
-      expect(json["board"]["links"][0]["href"]).to eq(api_v1_board_path(@board))
+      expect(json["board"]["links"][0]["href"]).to eq(api_v1_board_url(@board))
       expect(json["board"]["links"][0]["rel"]).to eq("self")
     end
 
     it "returns the ship's player" do
-      expect(json["player"]["links"][0]["href"]).to eq(api_v1_game_player_path(@game, @player))
+      expect(json["player"]["links"][0]["href"]).to eq(api_v1_game_player_url(@game, @player))
       expect(json["player"]["links"][0]["rel"]).to eq("self")
     end
 
     it "returns the ship's game" do
-      expect(json["game"]["links"][0]["href"]).to eq(api_v1_game_path(@game))
+      expect(json["game"]["links"][0]["href"]).to eq(api_v1_game_url(@game))
       expect(json["game"]["links"][0]["rel"]).to eq("self")
     end
   end

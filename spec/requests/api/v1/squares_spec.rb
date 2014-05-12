@@ -7,7 +7,7 @@ describe "Squares API :" do
       @board  = @game.boards.first
       @square = @board.squares.first
 
-      get api_v1_board_square_path(@board, @square)
+      get api_v1_board_square_url(@board, @square)
     end
 
     it "is a successful request" do
@@ -15,7 +15,7 @@ describe "Squares API :" do
     end
 
     it "returns the square's self link" do
-      expect(json["links"][0]["href"]).to eq(api_v1_board_square_path(@board, @square))
+      expect(json["links"][0]["href"]).to eq(api_v1_board_square_url(@board, @square))
       expect(json["links"][0]["rel"]).to eq("self")
     end
 
@@ -38,12 +38,12 @@ describe "Squares API :" do
     describe "links" do
       it "returns a link to the square's board" do
         expect(json["board"]["links"][0]["rel"]).to eq("self")
-        expect(json["board"]["links"][0]["href"]).to eq(api_v1_board_path(@board))
+        expect(json["board"]["links"][0]["href"]).to eq(api_v1_board_url(@board))
       end
 
       it "returns a link to the square's game" do
         expect(json["game"]["links"][0]["rel"]).to eq("self")
-        expect(json["game"]["links"][0]["href"]).to eq(api_v1_game_path(@game))
+        expect(json["game"]["links"][0]["href"]).to eq(api_v1_game_url(@game))
       end
     end
   end

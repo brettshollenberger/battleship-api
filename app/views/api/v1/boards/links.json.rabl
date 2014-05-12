@@ -1,6 +1,6 @@
 node(:links) do |board|
   @links = [{
-    :href => api_v1_board_path(board),
+    :href => api_v1_board_url(board),
     :rel  => "self"
   }]
 
