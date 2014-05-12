@@ -7,6 +7,7 @@ describe "Boards API :" do
       @board  = @game.boards.first
       @p1     = @board.player
       @square = @board.squares.first
+      @ship   = @board.ships.first
 
       get api_v1_board_path(@board)
     end
@@ -22,6 +23,10 @@ describe "Boards API :" do
 
     it "returns the board's id" do
       expect(json["id"]).to eq(@board.id)
+    end
+
+    it "returns the board's ships" do
+      expect(json["ships"][0]["links"][0]["href"]).to eq(api_v1_board_ship_path(@board, @ship))
     end
 
     it "returns the board's squares" do

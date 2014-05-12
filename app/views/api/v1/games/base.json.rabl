@@ -1,4 +1,3 @@
-node(:href) { |n| api_v1_game_path(@game) }
 attributes :id, :phase, :turn
 
 child(:players) do |player|
