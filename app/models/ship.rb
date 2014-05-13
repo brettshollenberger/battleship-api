@@ -13,7 +13,8 @@ class Ship < ActiveRecord::Base
   end
 
   def unset
-    write_attribute(:state, "unset") && save
+    squares.reload && squares.each(&:unset_ship)
+    update_attribute(:state, "unset")
   end
 
   def unset?
@@ -23,14 +24,10 @@ class Ship < ActiveRecord::Base
   def set(*sqs)
     squares.reload
     if board.settable?(ship: self, squares: sqs.flatten)
-      unset_previous_squares
+      unset
       update_attribute(:state, "set")
       sqs.flatten.each { |sq| sq.set_ship(self) }
     end
-  end
-
-  def unset_previous_squares
-    squares.each(&:unset_ship)
   end
 
   def set?

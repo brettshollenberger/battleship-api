@@ -4,7 +4,11 @@ describe Ship do
   before(:each) do
     @game  = FactoryGirl.create(:game)
     @board = @game.boards.first
-    @ship  = @board.ships.last
+    @ship  = @board.ships[4]
+    @ship2 = @board.ships[3]
+    @ship3 = @board.ships[2]
+    @ship4 = @board.ships[1]
+    @ship5 = @board.ships[0]
   end
 
   it "is valid" do
@@ -115,7 +119,7 @@ describe Ship do
         end
       end
 
-      describe "When Previously Set to Some of the Same Squares:" do
+      describe "When Previously Set to Some of the Same Squares :" do
         before(:each) do
           @ship.set([@sq2, @sq3])
         end
@@ -128,6 +132,34 @@ describe Ship do
         it "unsets previously set squares" do
           [@sq1].each(&:reload)
           expect(@sq1.taken?).to eq(false)
+        end
+      end
+
+      describe "When All Ships for A Player Are Set :" do
+
+        before(:each) do
+          @sq5  = @board.squares[4]
+          @sq6  = @board.squares[5]
+          @sq7  = @board.squares[6]
+          @sq8  = @board.squares[7]
+          @sq9  = @board.squares[10]
+          @sq10 = @board.squares[11]
+          @sq11 = @board.squares[12]
+          @sq12 = @board.squares[13]
+          @sq13 = @board.squares[14]
+          @sq14 = @board.squares[15]
+          @sq15 = @board.squares[16]
+          @sq16 = @board.squares[17]
+          @sq17 = @board.squares[18]
+
+          @ship2.set([@sq3, @sq4, @sq5])
+          @ship3.set([@sq6, @sq7, @sq8])
+          @ship4.set([@sq9, @sq10, @sq11, @sq12])
+          @ship5.set([@sq13, @sq14, @sq15, @sq16, @sq17])
+        end
+
+        it "has all ships for a board set" do
+          expect(@board.ships.set?).to eq(true)
         end
       end
     end
@@ -143,6 +175,24 @@ describe Ship do
         @ship.set([@sq1, @sq2])
         expect(@ship.set?).to eq(false)
       end
+    end
+  end
+
+  describe "Unsetting Ships :" do
+    before(:each) do
+      @sq1 = @board.squares[0]
+      @sq2 = @board.squares[1]
+      @ship.set([@sq1, @sq2])
+      @ship.unset
+    end
+
+    it "unsets the ship" do
+      expect(@ship.set?).to be_false
+    end
+
+    it "unsets each square" do
+      [@sq1, @sq2].each(&:reload)
+      expect([@sq1, @sq2].any?(&:taken?)).to be_false
     end
   end
 
