@@ -1,6 +1,6 @@
 extends "api/v1/boards/links"
 
-attributes :id
+attributes :id, :state
 
 node :ships do
   @board.ships.map do |ship| 

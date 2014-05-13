@@ -8,6 +8,11 @@ class Board < ActiveRecord::Base
     end
   end
 
+  state_machine :state, :initial => :unlocked do
+    state :unlocked
+    state :locked
+  end
+
   after_create :setup
 
   def setup

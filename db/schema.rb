@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140512095525) do
+ActiveRecord::Schema.define(version: 20140513060253) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -19,8 +19,9 @@ ActiveRecord::Schema.define(version: 20140512095525) do
   create_table "boards", force: true do |t|
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "game_id",    null: false
-    t.integer  "player_id",  null: false
+    t.integer  "game_id",                         null: false
+    t.integer  "player_id",                       null: false
+    t.string   "state",      default: "unlocked"
   end
 
   create_table "games", force: true do |t|

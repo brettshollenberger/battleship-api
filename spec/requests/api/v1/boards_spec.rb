@@ -25,6 +25,10 @@ describe "Boards API :" do
       expect(json["id"]).to eq(@board.id)
     end
 
+    it "returns the board's state" do
+      expect(json["state"]).to eq(@board.state)
+    end
+
     it "returns the board's ships" do
       expect(json["ships"][0]["links"][0]["href"]).to eq(api_v1_board_ship_url(@board, @ship))
     end
