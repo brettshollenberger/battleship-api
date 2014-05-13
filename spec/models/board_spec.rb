@@ -17,6 +17,11 @@ describe Board do
       expect(@board).to be_valid
     end
 
+    it "is valid with a state of 'lockable'" do
+      @board.state = "lockable"
+      expect(@board).to be_valid
+    end
+
     it "is valid with a state of 'locked'" do
       @board.state = "locked"
       expect(@board).to be_valid

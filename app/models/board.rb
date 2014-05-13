@@ -10,6 +10,7 @@ class Board < ActiveRecord::Base
 
   state_machine :state, :initial => :unlocked do
     state :unlocked
+    state :lockable
     state :locked
   end
 

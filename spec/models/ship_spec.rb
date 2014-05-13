@@ -161,6 +161,11 @@ describe Ship do
         it "has all ships for a board set" do
           expect(@board.ships.set?).to eq(true)
         end
+
+        it "sets the board's state to 'lockable'" do
+          @board.reload
+          expect(@board.lockable?).to eq(true)
+        end
       end
     end
 
