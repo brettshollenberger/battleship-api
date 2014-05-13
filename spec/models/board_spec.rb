@@ -21,11 +21,13 @@ describe Board do
     end
   end
 
-  describe "board#squares_settable?(squares)" do
+  describe "board#settable?(ship: ship, squares: squares)" do
     before(:each) do
       @game            = FactoryGirl.create(:game)
       @board           = @game.boards.first
       @board2          = @game.boards.last
+      @ship            = @board.ships[2]
+      @ship2           = @board.ships.first
       @sq1             = @board.squares.where(x: "1", y: "A").first
       @sq2             = @board.squares.where(x: "2", y: "A").first
       @sq3             = @board.squares.where(x: "3", y: "A").first
@@ -69,18 +71,23 @@ describe Board do
     end
 
     it "allows squares to be set if they are all empty and contiguous" do
-      expect(@board.squares_settable?([@sq1, @sq2, @sq3])).to eq(true)
+      expect(@board.settable?(squares: [@sq1, @sq2, @sq3], ship: @ship)).to eq(true)
       @sq1.state = "set"
-      expect(@board.squares_settable?([@sq1, @sq2, @sq3])).to eq(false)
+      expect(@board.settable?(squares: [@sq1, @sq2, @sq3], ship: @ship)).to eq(false)
     end
 
     it "allows only squares on the same board to be set together" do
-      expect(@board.squares_settable?([@sq1, @sq2, @sq3])).to eq(true)
-      expect(@board.squares_settable?([@sq1_from_board2, @sq2, @sq3])).to eq(false)
+      expect(@board.settable?(squares: [@sq1, @sq2, @sq3], ship: @ship)).to eq(true)
+      expect(@board.settable?(squares: [@sq1_from_board2, @sq2, @sq3], ship: @ship)).to eq(false)
     end
 
     it "allows only the board that owns the squares to declare the squares settable" do
-      expect(@board2.squares_settable?([@sq1, @sq2, @sq3])).to eq(false)
+      expect(@board2.settable?(squares: [@sq1, @sq2, @sq3], ship: @ship)).to eq(false)
+    end
+
+    it "only allows squares to be set to a ship of the proper length" do
+      expect(@board.settable?(squares: [@sq1, @sq2, @sq3], ship: @ship)).to eq(true)
+      expect(@board.settable?(squares: [@sq1, @sq2, @sq3], ship: @ship2)).to eq(false)
     end
   end
 end

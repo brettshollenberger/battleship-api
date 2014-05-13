@@ -21,10 +21,16 @@ class Ship < ActiveRecord::Base
   end
 
   def set(*sqs)
-    if sqs.length == self.length && board.squares_settable?(*sqs)
-      write_attribute(:state, "set") && save
-      return true
+    squares.reload
+    if board.settable?(ship: self, squares: sqs.flatten)
+      unset_previous_squares
+      update_attribute(:state, "set")
+      sqs.flatten.each { |sq| sq.set_ship(self) }
     end
+  end
+
+  def unset_previous_squares
+    squares.each(&:unset_ship)
   end
 
   def set?

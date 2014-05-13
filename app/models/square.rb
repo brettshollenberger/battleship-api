@@ -16,4 +16,18 @@ class Square < ActiveRecord::Base
     update!(state: :hit)     if taken?
     update!(state: :guessed) if empty?
   end
+
+  def set_ship(ship)
+    update_attribute(:ship, ship)
+    update_attribute(:state, "taken")
+  end
+
+  def unset_ship
+    update_attribute(:ship, nil)
+    update_attribute(:state, "empty")
+  end
+
+  def settable_to?(ship)
+    self.ship == ship || self.empty?
+  end
 end

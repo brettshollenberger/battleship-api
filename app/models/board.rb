@@ -33,8 +33,10 @@ class Board < ActiveRecord::Base
     squares.where(x: x.to_s, y: y.to_s).first
   end
 
-  def squares_settable?(*sqs)
-    sqs.flatten.all?(&:empty?) && same?(*sqs, :board) && this_board?(*sqs) && contiguous?(*sqs)
+  def settable?(opts={})
+    opts[:squares].all? { |sq| sq.settable_to?(opts[:ship]) } && 
+      opts[:ship].length == opts[:squares].length && same?(opts[:squares], :board) &&
+      this_board?(opts[:squares]) && contiguous?(opts[:squares])
   end
 
   def contiguous?(*sqs)

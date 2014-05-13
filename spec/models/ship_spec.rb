@@ -71,23 +71,79 @@ describe Ship do
     expect(@ship).to_not be_valid
   end
 
-  describe "setting a ship" do
+  describe "Setting Ships :" do
     before(:each) do
       @sq1 = @board.squares[0]
       @sq2 = @board.squares[1]
+      @sq3 = @board.squares[2]
+      @sq4 = @board.squares[3]
     end
 
-    it "can be set if passed the correct number of squares" do
-      expect(@ship.length).to eq(2)
-      expect(@ship.set(@sq1, @sq2)).to eq(true)
+    describe "Correctly Setting :" do
+      before(:each) do
+        @ship.set([@sq1, @sq2])
+      end
+
+      it "its state is 'set'" do
+        expect(@ship.set?).to eq(true)
+      end
+
+      it "assigns a relationship to each square" do
+        expect(@sq1.ship).to eq(@ship)
+        expect(@sq2.ship).to eq(@ship)
+      end
+
+      it "sets each square's state to 'taken'" do
+        expect(@sq1.taken?).to eq(true)
+        expect(@sq2.taken?).to eq(true)
+      end
+
+      describe "When Previously Set to Squares :" do
+        before(:each) do
+          @ship.set([@sq3, @sq4])
+        end
+
+        it "assigns a relationship to each new square" do
+          expect(@sq3.ship).to eq(@ship)
+          expect(@sq4.ship).to eq(@ship)
+        end
+
+        it "unsets previously set squares" do
+          [@sq1, @sq2].each(&:reload)
+          expect(@sq1.taken?).to eq(false)
+          expect(@sq2.taken?).to eq(false)
+        end
+      end
+
+      describe "When Previously Set to Some of the Same Squares:" do
+        before(:each) do
+          @ship.set([@sq2, @sq3])
+        end
+
+        it "assigns a relationship to each new square" do
+          expect(@sq2.ship).to eq(@ship)
+          expect(@sq3.ship).to eq(@ship)
+        end
+
+        it "unsets previously set squares" do
+          [@sq1].each(&:reload)
+          expect(@sq1.taken?).to eq(false)
+        end
+      end
     end
 
-    # it "updates the square when it is set" do
-    #   ship.state = :unset
-    #   expect(ship.square.state).to eq("empty")
-    #   ship.set
-    #   expect(ship.square.state).to eq("taken")
-    # end
+    describe "Incorrectly Setting :" do
+      it "does not set a ship to the wrong number of squares" do
+        @ship.set([@sq1, @sq2, @sq3])
+        expect(@ship.set?).to eq(false)
+      end
+
+      it "does not set a ship to taken squares" do
+        @sq1.state = "taken"
+        @ship.set([@sq1, @sq2])
+        expect(@ship.set?).to eq(false)
+      end
+    end
   end
 
   describe "getting hit" do
