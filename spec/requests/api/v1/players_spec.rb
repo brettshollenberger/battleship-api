@@ -119,5 +119,31 @@ describe "Players API :" do
         expect(json["message"]).to eq("It is not that player's turn.")
       end
     end
+
+    describe "When the second player finishes setting their name" do
+      before(:each) do
+        @game    = FactoryGirl.create(:game)
+        @b1      = @game.boards.first
+        @b2      = @game.boards.last
+        @p1      = @b1.player
+        @p2      = @b2.player
+
+        put api_v1_game_player_url(@game, @p1), update_player_json
+        put api_v1_game_player_url(@game, @p2), update_player_json
+        @game.sync
+      end
+
+      it "is a successful request" do
+        expect(response).to be_success
+      end
+
+      it "switches the game into setup_ships phase" do
+        expect(@game.phase).to eq("setup_ships")
+      end
+
+      it "responds with the available actions" do
+        expect(json["actions"][0]["prompt"]).to eq("Set ship for Player 1")
+      end
+    end
   end
 end

@@ -12,6 +12,7 @@ module Api
         render forbidden message: "It is not that player's turn." and return if !@player.turn?(@game)
 
         if @player.update(player_params)
+          @game.sync
           @game.toggle_turn && @actionable = true if @player.setup?
           render "show", status: :ok
         end

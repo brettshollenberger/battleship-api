@@ -1,12 +1,16 @@
 class Ship < ActiveRecord::Base
   belongs_to :board
-  belongs_to :square
+  has_many :squares
 
   validates_presence_of :board
   validates :kind, :inclusion => { :in => ["aircraft carrier", "battleship", 
                                            "submarine", "destroyer", "patrol boat"] }
 
   validates :state, :inclusion => { :in => ["unset", "set", "hit", "sunk"] }
+
+  def game
+    board.game
+  end
 
   def unset
     write_attribute(:state, "unset") && save
@@ -16,8 +20,11 @@ class Ship < ActiveRecord::Base
     state == "unset"
   end
 
-  def set
-    write_attribute(:state, "set") && save
+  def set(*sqs)
+    if sqs.length == self.length && board.squares_settable?(*sqs)
+      write_attribute(:state, "set") && save
+      return true
+    end
   end
 
   def set?

@@ -10,7 +10,7 @@ class Square < ActiveRecord::Base
 
   belongs_to :board
   belongs_to :game
-  has_one :ship
+  belongs_to :ship
 
   def fire
     update!(state: :hit)     if taken?

@@ -11,6 +11,17 @@ node(:actions) do |game|
     end
   end
 
+  if @game.setup_ship_phase?
+    @game.updatable_ships.map do |ship|
+      @actions.push({
+        :href   => api_v1_board_ship_url(ship.board, ship),
+        :rel    => "edit",
+        :prompt => "Set ship for #{ship.board.player.player_number(@game)}"
+      })
+    end
+  end
+
+
   @actions
 end
 
