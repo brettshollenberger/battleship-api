@@ -3,6 +3,8 @@ require 'spec_helper'
 describe Ship do
   before(:each) do
     @game  = FactoryGirl.create(:game)
+    @p1    = @game.players.first
+    @p2    = @game.players.last
     @board = @game.boards.first
     @ship  = @board.ships[4]
     @ship2 = @board.ships[3]
@@ -170,15 +172,64 @@ describe Ship do
     end
 
     describe "Incorrectly Setting :" do
-      it "does not set a ship to the wrong number of squares" do
-        @ship.set([@sq1, @sq2, @sq3])
-        expect(@ship.set?).to eq(false)
+      describe "Wrong number of squares :" do
+        before(:each) do
+          @ship.set([@sq1, @sq2, @sq3])
+        end
+
+        it "does not set a ship to the wrong number of squares" do
+          expect(@ship.set?).to eq(false)
+        end
+
+        it "adds an error message" do
+          expect(@ship.errors[:squares]).to include("Can only be assigned to two squares")
+        end
+
+        it "removes the error on validation" do
+          @ship.set([@sq1, @sq2])
+          expect(@ship.errors[:squares]).to_not include("Can only be assigned to two squares")
+        end
+      end
+    end
+
+    describe "Setting a ship on taken squares :" do
+      before(:each) do
+        @sq1.state = "taken"
+        @ship.set([@sq1, @sq2])
       end
 
       it "does not set a ship to taken squares" do
-        @sq1.state = "taken"
-        @ship.set([@sq1, @sq2])
         expect(@ship.set?).to eq(false)
+      end
+
+      it "adds an error message" do
+        expect(@ship.errors[:squares]).to include("Square #{@sq1.id} is already taken")
+      end
+
+      it "removes the error on validation" do
+        @ship.set([@sq2, @sq3])
+        expect(@ship.errors[:squares]).to_not include("Square #{@sq1.id} is already taken")
+      end
+    end
+
+    describe "Setting a ship out of turn :" do
+      before(:each) do
+        @game.toggle_turn
+        @ship.set([@sq1, @sq2])
+      end
+
+      it "does not set a ship out of turn" do
+        expect(@ship.set?).to eq(false)
+      end
+
+      it "adds an error message" do
+        expect(@ship.errors[:squares]).to include("cannot be set out of turn")
+      end
+
+      it "removes the error on validation" do
+        @game.toggle_turn
+        @ship.set([@sq2, @sq3])
+        expect(@ship.errors[:squares]).to_not include("cannot be set out of turn")
       end
     end
   end

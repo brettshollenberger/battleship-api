@@ -25,6 +25,7 @@ class Ship < ActiveRecord::Base
     squares.reload
     if board.settable?(ship: self, squares: sqs.flatten)
       unset
+      clear_setting_errors
       update_attribute(:state, "set")
       sqs.flatten.each { |sq| sq.set_ship(self) }
     end
@@ -32,6 +33,48 @@ class Ship < ActiveRecord::Base
 
   def set?
     state == "set"
+  end
+
+  def correct_length?(squares)
+    unless self.length == squares.length
+      add_setting_error(:length)
+      false
+    else
+      true
+    end
+  end
+
+  def turn?
+    unless board.player.turn?(game.reload)
+      add_setting_error(:out_of_turn)
+      false
+    else
+      true
+    end
+  end
+
+  def clear_setting_errors
+    errors.delete(:squares)
+  end
+
+  def add_setting_error(error)
+    errors.add(:squares, self.send(error.to_s + "_error"))
+  end
+
+  def out_of_turn_error
+    "cannot be set out of turn"
+  end
+
+  def length_error
+    "Can only be assigned to #{length.to_words} squares"
+  end
+
+  def reassignment_error(square)
+    "Square #{square.id} is already taken"
+  end
+
+  def add_reassignment_error(square)
+    errors.add(:squares, reassignment_error(square))
   end
 
   state_machine :kind do

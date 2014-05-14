@@ -41,8 +41,8 @@ class Board < ActiveRecord::Base
 
   def settable?(opts={})
     opts[:squares].all? { |sq| sq.settable_to?(opts[:ship]) } && 
-      opts[:ship].length == opts[:squares].length && same?(opts[:squares], :board) &&
-      this_board?(opts[:squares]) && contiguous?(opts[:squares])
+      opts[:ship].correct_length?(opts[:squares])&& same?(opts[:squares], :board) &&
+      this_board?(opts[:squares]) && opts[:ship].turn? && contiguous?(opts[:squares])
   end
 
   def contiguous?(*sqs)

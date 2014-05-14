@@ -28,6 +28,11 @@ class Square < ActiveRecord::Base
   end
 
   def settable_to?(ship)
-    self.ship == ship || self.empty?
+    if self.ship == ship || self.empty?
+      true
+    else
+      ship.add_reassignment_error(self)
+      false
+    end
   end
 end
