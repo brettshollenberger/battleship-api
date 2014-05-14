@@ -16,7 +16,9 @@ module Api
         @squares = params[:ship][:squares].map { |s| Square.find(ActiveSupport::JSON.decode(s)["id"]) }
         if @ship.set(@squares)
           @board = @ship.board
+          @game  = @board.game
           @ship.squares.reload
+          @actionable = true
           render "show", status: :ok
         else
         end

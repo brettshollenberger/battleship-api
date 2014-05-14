@@ -60,7 +60,12 @@ describe "Ships API :" do
     describe "In ship setting mode" do
       describe "When it is the Player's Turn" do
         before(:each) do
-          @game  = FactoryGirl.create(:game)
+          @game  = FactoryGirl.create(:game, phase: "setup_ships")
+          @p1    = @game.players.first
+          @p2    = @game.players.last
+          @p1.name = "Brett"
+          @p2.name = "Tag"
+          @p1.save && @p2.save
           @board = @game.boards.first
           @sq1   = @board.squares[0]
           @sq2   = @board.squares[1]
@@ -77,9 +82,17 @@ describe "Ships API :" do
           expect(response.status).to eq(200)
         end
 
+        it "is set" do
+          expect(json["state"]).to eq("set")
+        end
+
         it "returns the ship's squares" do
           expect(json["squares"][0]["id"]).to eq(@sq1.id)
           expect(json["squares"][1]["id"]).to eq(@sq2.id)
+        end
+
+        it "responds with the available actions" do
+          expect(json["actions"][0]["prompt"]).to eq("Set ship for Player 1")
         end
       end
     end
