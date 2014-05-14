@@ -91,8 +91,59 @@ describe "Ships API :" do
           expect(json["squares"][1]["id"]).to eq(@sq2.id)
         end
 
-        it "responds with the available actions" do
+        it "responds with the remaining set ships actions" do
           expect(json["actions"][0]["prompt"]).to eq("Set ship for Player 1")
+          expect(json["actions"][1]["prompt"]).to eq("Set ship for Player 1")
+          expect(json["actions"][2]["prompt"]).to eq("Set ship for Player 1")
+          expect(json["actions"][3]["prompt"]).to eq("Set ship for Player 1")
+          expect(json["actions"][4]).to eq(nil)
+        end
+      end
+
+      describe "When setting the final ship for a player :" do
+        before(:each) do
+          @game    = FactoryGirl.create(:game, phase: "setup_ships")
+          @p1      = @game.players.first
+          @p2      = @game.players.last
+          @p1.name = "Brett"
+          @p2.name = "Tag"
+          @p1.save && @p2.save
+
+          @board = @game.boards.first
+          @ship  = @board.ships[4]
+          @ship2 = @board.ships[3]
+          @ship3 = @board.ships[2]
+          @ship4 = @board.ships[1]
+          @ship5 = @board.ships[0]
+          @sq1   = @board.squares[0]
+          @sq2   = @board.squares[1]
+          @sq3   = @board.squares[2]
+          @sq4   = @board.squares[3]
+          @sq5   = @board.squares[4]
+          @sq6   = @board.squares[5]
+          @sq7   = @board.squares[6]
+          @sq8   = @board.squares[7]
+          @sq9   = @board.squares[10]
+          @sq10  = @board.squares[11]
+          @sq11  = @board.squares[12]
+          @sq12  = @board.squares[13]
+          @sq13  = @board.squares[14]
+          @sq14  = @board.squares[15]
+          @sq15  = @board.squares[16]
+          @sq16  = @board.squares[17]
+          @sq17  = @board.squares[18]
+
+          @ship2.set([@sq3, @sq4, @sq5])
+          @ship3.set([@sq6, @sq7, @sq8])
+          @ship4.set([@sq9, @sq10, @sq11, @sq12])
+          @ship5.set([@sq13, @sq14, @sq15, @sq16, @sq17])
+
+          put api_v1_board_ship_url(@board, @ship), update_ship_json
+        end
+
+        it "responds with the lock board action" do
+          expect(json["actions"][0]["href"]).to eq(api_v1_board_url(@board))
+          expect(json["actions"][0]["prompt"]).to eq("Lock board")
         end
       end
     end

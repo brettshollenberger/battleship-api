@@ -12,11 +12,21 @@ node(:actions) do |game|
   end
 
   if @game.setup_ship_phase?
-    @game.updatable_ships.map do |ship|
+    if @game.updatable_ships.length > 0
+      @game.updatable_ships.map do |ship|
+        @actions.push({
+          :href   => api_v1_board_ship_url(ship.board, ship),
+          :rel    => "edit",
+          :prompt => "Set ship for #{ship.board.player.player_number(@game)}"
+        })
+      end
+    end
+
+    if @board.lockable?
       @actions.push({
-        :href   => api_v1_board_ship_url(ship.board, ship),
+        :href   => api_v1_board_url(@board),
         :rel    => "edit",
-        :prompt => "Set ship for #{ship.board.player.player_number(@game)}"
+        :prompt => "Lock board"
       })
     end
   end
