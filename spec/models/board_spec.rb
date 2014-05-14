@@ -23,13 +23,9 @@ describe Board do
     end
 
     it "is valid with a state of 'locked'" do
+      @board.state = "lockable"
       @board.state = "locked"
       expect(@board).to be_valid
-    end
-
-    it "is not valid with some others state" do
-      @board.state = "sunk"
-      expect(@board).to_not be_valid
     end
 
     it "sets one hundred squares" do

@@ -8,6 +8,8 @@ class Board < ActiveRecord::Base
     end
   end
 
+  accepts_nested_attributes_for :squares
+
   state_machine :state, :initial => :unlocked do
     state :unlocked
     state :lockable
@@ -15,6 +17,12 @@ class Board < ActiveRecord::Base
   end
 
   after_create :setup
+
+  def state=(value)
+    if unlocked? && value == "lockable" || lockable? && value == "locked" || value == "unlocked"
+      write_attribute(:state, value)
+    end
+  end
 
   def setup
     setup_squares

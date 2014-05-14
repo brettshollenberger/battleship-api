@@ -149,7 +149,7 @@ describe "Ships API :" do
             end
           end
         end
-        
+
         describe "Unsuccessfully setting :" do
           describe "Setting to too many squares :" do
             def too_many_squares_json
