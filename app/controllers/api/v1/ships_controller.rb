@@ -21,6 +21,7 @@ module Api
           @actionable = true
           render "show", status: :ok
         else
+          render forbidden errors: @ship.errors
         end
       end
 
@@ -31,6 +32,10 @@ module Api
 
       def created
         { :json => @game.to_json, status: :created, location: api_v1_game_url(@game) }
+      end
+
+      def forbidden(errors)
+        { :json => errors, status: :forbidden, errors: errors }
       end
     end
   end

@@ -66,11 +66,11 @@ class Ship < ActiveRecord::Base
   end
 
   def length_error
-    "Can only be assigned to #{length.to_words} squares"
+    "can only be assigned to #{length.to_words} squares"
   end
 
   def reassignment_error(square)
-    "Square #{square.id} is already taken"
+    "square #{square.id} is already taken"
   end
 
   def add_reassignment_error(square)

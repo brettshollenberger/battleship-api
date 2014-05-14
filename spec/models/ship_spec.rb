@@ -182,12 +182,12 @@ describe Ship do
         end
 
         it "adds an error message" do
-          expect(@ship.errors[:squares]).to include("Can only be assigned to two squares")
+          expect(@ship.errors[:squares]).to include("can only be assigned to two squares")
         end
 
         it "removes the error on validation" do
           @ship.set([@sq1, @sq2])
-          expect(@ship.errors[:squares]).to_not include("Can only be assigned to two squares")
+          expect(@ship.errors[:squares]).to_not include("can only be assigned to two squares")
         end
       end
     end
@@ -203,12 +203,12 @@ describe Ship do
       end
 
       it "adds an error message" do
-        expect(@ship.errors[:squares]).to include("Square #{@sq1.id} is already taken")
+        expect(@ship.errors[:squares]).to include("square #{@sq1.id} is already taken")
       end
 
       it "removes the error on validation" do
         @ship.set([@sq2, @sq3])
-        expect(@ship.errors[:squares]).to_not include("Square #{@sq1.id} is already taken")
+        expect(@ship.errors[:squares]).to_not include("square #{@sq1.id} is already taken")
       end
     end
 
