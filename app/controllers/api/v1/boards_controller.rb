@@ -15,9 +15,11 @@ module Api
       def update
         @board   = Board.find(params[:id])
         if @board.update(board_params)
-          @squares = @board.squares
-          @ships   = @board.ships
-          @game    = @board.game
+          @squares    = @board.squares
+          @ships      = @board.ships
+          @game       = @board.game
+          @actionable = true
+          @game.toggle_turn if @board.locked?
           render "show", status: :ok
         end
       end

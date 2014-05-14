@@ -5,6 +5,10 @@ module FactoriesHelpers
     @p1    = @game.players.first
     @p2    = @game.players.last
 
+    @p1.name = "Brett"
+    @p2.name = "Tag"
+    @p1.save && @p2.save
+
     @board = @game.boards.first
 
     @ship  = @board.ships[4]

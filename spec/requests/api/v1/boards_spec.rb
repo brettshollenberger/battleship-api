@@ -71,6 +71,10 @@ describe "Boards API :" do
       it "is locked" do
         expect(json["state"]).to eq("locked")
       end
+
+      it "returns actions for Player 2 to set ships" do
+        expect(json["actions"][0]["prompt"]).to eq("Set ship for Player 2")
+      end
     end
 
     describe "When board is not previously, but requested to be locked with all ships set" do
@@ -98,6 +102,40 @@ describe "Boards API :" do
 
       it "is locked" do
         expect(json["state"]).to eq("locked")
+      end
+    end
+
+    describe "When board is not lockable" do
+      def update_board_json
+        @board.state = "lockable"
+        @board.state = "locked"
+        json = { :format => :json, :board => @board.to_json(:include => :squares) }
+        @board.state = "unlocked"
+        json
+      end
+
+      before(:each) do
+        @board = setup_board
+        @board.ships.first.unset
+
+        put api_v1_board_url(@board), update_board_json
+      end
+
+      it "is a successful request" do
+        expect(response).to be_success
+      end
+
+      it "returns a 200" do
+        expect(response.status).to eq(200)
+      end
+
+      it "has set as many ships as possible, and returned links to the remaining ships to be set" do
+        expect(json["actions"][0]["href"]).to eq(api_v1_board_ship_url(@board, @board.ships.first))
+        expect(json["actions"].length).to eq(1)
+      end
+
+      it "is unlocked" do
+        expect(json["state"]).to eq("unlocked")
       end
     end
   end
