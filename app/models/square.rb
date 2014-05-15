@@ -22,7 +22,7 @@ class Square < ActiveRecord::Base
 
   def fire
     update_attribute(:state, :hit)     if taken?
-    update_attribute(:state, :guessed) if empty?
+    update_attribute(:state, :miss)    if empty?
   end
 
   def set_ship(ship)

@@ -61,7 +61,7 @@ class Game < ActiveRecord::Base
   end
 
   def play_phase?
-    ships.all?(&:set?)
+    !ships.any?(&:unset?) && !finished_phase?
   end
 
   def finished_phase?
@@ -104,7 +104,7 @@ class Game < ActiveRecord::Base
   end
 
   def updatable_squares
-    players.find(not_turn).board_for(self).squares.reject(&:hit?).reject(&:guessed?)
+    players.find(not_turn).board_for(self).squares.reject(&:hit?).reject(&:miss?)
   end
 
   def set_ship_controls
