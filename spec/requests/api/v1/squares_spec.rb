@@ -79,6 +79,29 @@ describe "Squares API :" do
       end
     end
 
+    describe "When the player places the winning shot" do
+      before(:each) do
+        @game   = finished_game
+        @board  = @game.boards.last
+        @square = @board.squares.first
+        @square.state = "taken"
+
+        put api_v1_board_square_url(@board, @square), update_square_json
+      end
+
+      it "is a successful request" do
+        expect(response).to be_success
+      end
+
+      it "returns a 200" do
+        expect(response.status).to eq(200)
+      end
+
+      it "responds with the available actions" do
+        expect(json["actions"][0]["prompt"]).to eq("Player 1 Victory! Play Again")
+      end
+    end
+
     describe "When it is not the Player's Turn" do
       before(:each) do
         @game   = game_in_play_mode

@@ -45,6 +45,11 @@ class Game < ActiveRecord::Base
     update_attribute(:phase, "setup_players") if setup_player_phase?
     update_attribute(:phase, "setup_ships")   if setup_ship_phase?
     update_attribute(:phase, "play")          if play_phase?
+
+    if finished_phase?
+      update_attribute(:phase, "finished")
+      update_attribute(:winner, find_winner)
+    end
   end
 
   def setup_player_phase?
@@ -57,6 +62,14 @@ class Game < ActiveRecord::Base
 
   def play_phase?
     ships.all?(&:set?)
+  end
+
+  def finished_phase?
+    players.any? { |player| player.ships_for(self).all?(&:sunk?) }
+  end
+
+  def find_winner
+    other_player(players.map { |player| player.ships_for(self).all?(&:sunk?) }.first).id
   end
 
   def controls

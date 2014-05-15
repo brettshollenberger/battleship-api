@@ -28,7 +28,10 @@ module Api
 
     private
       def decode_json
-        params[:board] = ActiveSupport::JSON.decode(params[:board])
+        begin
+          params[:board] = ActiveSupport::JSON.decode(params[:board])
+        rescue
+        end
       end
 
       def group_squares_by_ship_id

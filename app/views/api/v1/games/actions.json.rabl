@@ -42,6 +42,14 @@ node(:actions) do |game|
     end
   end
 
+  if @game.finished_phase?
+    @actions.push({
+      :href   => api_v1_games_url,
+      :rel    => "create",
+      :prompt => "#{@game.players.find(@game.winner).player_number(@game)} Victory! Play Again"
+    })
+  end
+
   @actions
 end
 

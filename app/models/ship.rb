@@ -8,6 +8,12 @@ class Ship < ActiveRecord::Base
 
   validates :state, :inclusion => { :in => ["unset", "set", "hit", "sunk"] }
 
+  def sync
+    squares.reload
+    update_attribute(:state, "hit")  if squares.any?(&:hit?)
+    update_attribute(:state, "sunk") if squares.all?(&:hit?)
+  end
+
   def game
     board.game
   end
@@ -19,6 +25,10 @@ class Ship < ActiveRecord::Base
 
   def unset?
     state == "unset"
+  end
+
+  def sunk?
+    state == "sunk"
   end
 
   def set(*sqs)

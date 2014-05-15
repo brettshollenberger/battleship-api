@@ -38,6 +38,12 @@ module FactoriesHelpers
     @game
   end
 
+  def finished_game
+    @game = game_in_play_mode
+    @game.boards.first.squares.each(&:fire)
+    @game
+  end
+
 private
   def set_board(board)
     @ship  = board.ships[4]

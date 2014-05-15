@@ -11,7 +11,9 @@ module Api
       end
 
       def show
-        @game = Game.find(params[:id])
+        @game   = Game.find(params[:id])
+        @player = @game.players.find(@game.turn)
+        @board  = @player.board_for(@game)
       end
 
     private

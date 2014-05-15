@@ -13,7 +13,7 @@ module Api
 
       def update
         @ship    = Ship.find(params[:id])
-        @squares = params[:ship][:squares].map { |s| Square.find(ActiveSupport::JSON.decode(s)["id"]) }
+        @squares = squares_json.map { |s| Square.find(s["id"]) }
         if @ship.set(@squares)
           @board = @ship.board
           @game  = @board.game
@@ -28,6 +28,18 @@ module Api
     private
       def ship_params
         params.require(:ship).permit(:squares)
+      end
+
+      def squares_json
+        params[:ship][:squares].map { |s| json_method(s) }
+      end
+
+      def json_method(sq)
+        begin
+          ActiveSupport::JSON.decode(sq)
+        rescue
+          sq
+        end
       end
 
       def created

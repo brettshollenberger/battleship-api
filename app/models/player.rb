@@ -21,7 +21,7 @@ class Player < ActiveRecord::Base
   def fire(square)
     square.fire if turn?(square.game)
   end
-  
+
   def player_number(game)
     @other_player = game.other_player(self)
     @other_player.id > self.id ? "Player 1" : "Player 2"
