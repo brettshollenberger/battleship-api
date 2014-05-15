@@ -22,12 +22,18 @@ module Api
           @game.toggle_turn
           @actionable = true
           render "show", status: :ok
+        else
+          render forbidden message: "It is not that player's turn."
         end
       end
 
     private
       def created
         { :json => @game.to_json, status: :created, location: api_v1_game_url(@game) }
+      end
+
+      def forbidden(message)
+        { :json => message, status: :forbidden, message: message }
       end
     end
   end

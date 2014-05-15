@@ -78,5 +78,27 @@ describe "Squares API :" do
         expect(json["actions"][0]["prompt"]).to eq("Player 2: Fire shot")
       end
     end
+
+    describe "When it is not the Player's Turn" do
+      before(:each) do
+        @game   = game_in_play_mode
+        @board  = @game.boards.first
+        @square = @board.squares.first
+
+        put api_v1_board_square_url(@board, @square), update_square_json
+      end
+
+      it "is not a successful request" do
+        expect(response).to_not be_success
+      end
+
+      it "returns a 403" do
+        expect(response.status).to eq(403)
+      end
+
+      it "responds with the error message" do
+        expect(json["message"]).to eq("It is not that player's turn.")
+      end
+    end
   end
 end
