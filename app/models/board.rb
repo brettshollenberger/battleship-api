@@ -8,7 +8,7 @@ class Board < ActiveRecord::Base
     end
   end
 
-  accepts_nested_attributes_for :squares
+  accepts_nested_attributes_for :ships
 
   state_machine :state, :initial => :unlocked do
     state :unlocked
@@ -49,7 +49,7 @@ class Board < ActiveRecord::Base
 
   def settable?(opts={})
     opts[:squares].all? { |sq| sq.settable_to?(opts[:ship]) } && 
-      opts[:ship].correct_length?(opts[:squares])&& same?(opts[:squares], :board) &&
+      opts[:ship].correct_length?(opts[:squares]) && same?(opts[:squares], :board) &&
       this_board?(opts[:squares]) && opts[:ship].turn? && contiguous?(opts[:squares])
   end
 

@@ -13,7 +13,9 @@ module Api
       end
 
       def update
-        @board   = Board.find(params[:id])
+        @board = Board.find(params[:id])
+        set_ships && params[:board].delete(:ships) && params[:board].delete(:squares)
+
         if @board.update(board_params)
           @squares    = @board.squares
           @ships      = @board.ships
@@ -29,8 +31,26 @@ module Api
         params[:board] = ActiveSupport::JSON.decode(params[:board])
       end
 
+      def group_squares_by_ship_id
+        return [] if params[:board][:squares] == nil
+
+        params[:board][:squares].select     { |sq| sq[:ship_id] != nil        }
+                                .group_by   { |sq| sq[:ship_id]               }
+                                .inject({}) do |h,(k,v)| 
+                                  h[k] = v.map { |sq| Square.find(sq[:id]) }; h
+                                end
+      end
+
+      def set_ships
+        group_squares_by_ship_id.each do |ship_id, squares|
+          @board.ships.find(ship_id).set(squares)
+        end
+      end
+
       def board_params
-        params.require(:board).permit(:state, square_attributes: [:ship_id])
+        params.require(:board).permit(:state, 
+                                      ship_attributes: [:squares],
+                                      square_attributes: [:ship_id])
       end
     end
   end

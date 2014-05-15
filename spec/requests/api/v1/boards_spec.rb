@@ -50,12 +50,38 @@ describe "Boards API :" do
     def update_board_json
       @board.state = "lockable"
       @board.state = "locked"
-      { :format => :json, :board => @board.to_json(:include => :squares) }
+      { :format => :json, :board => @board.to_json(:include => [:ships, :squares]) }
     end
 
-    describe "When board is lockable" do
+    describe "When just requesting board to be locked" do
       before(:each) do
-        @board = setup_board
+        @board        = setup_board
+        @board.state = "lockable"
+        @board.state = "locked"
+
+        put api_v1_board_url(@board), { :format => :json, :board => @board.to_json }
+      end
+
+      it "is a successful request" do
+        expect(response).to be_success
+      end
+
+      it "returns a 200" do
+        expect(response.status).to eq(200)
+      end
+
+      it "is locked" do
+        expect(json["state"]).to eq("locked")
+      end
+
+      it "returns actions for Player 2 to set ships" do
+        expect(json["actions"][0]["prompt"]).to eq("Set ship for Player 2")
+      end
+    end
+
+    describe "When sending ships to set with" do
+      before(:each) do
+        @board  = setup_board
 
         put api_v1_board_url(@board), update_board_json
       end
@@ -77,17 +103,14 @@ describe "Boards API :" do
       end
     end
 
-    describe "When board is not previously, but requested to be locked with all ships set" do
-      def update_board_json
+    describe "When requesting board to be locked, but not all ships are set" do
+      before(:each) do
+        @board       = setup_board
         @board.state = "lockable"
         @board.state = "locked"
-        json = { :format => :json, :board => @board.to_json(:include => :squares) }
-        @board.state = "unlocked"
-        json
-      end
-
-      before(:each) do
-        @board = setup_board
+        @ship        = @board.ships.first
+        @ship.unset
+        @board.squares.reload
 
         put api_v1_board_url(@board), update_board_json
       end
@@ -98,44 +121,48 @@ describe "Boards API :" do
 
       it "returns a 200" do
         expect(response.status).to eq(200)
-      end
-
-      it "is locked" do
-        expect(json["state"]).to eq("locked")
-      end
-    end
-
-    describe "When board is not lockable" do
-      def update_board_json
-        @board.state = "lockable"
-        @board.state = "locked"
-        json = { :format => :json, :board => @board.to_json(:include => :squares) }
-        @board.state = "unlocked"
-        json
-      end
-
-      before(:each) do
-        @board = setup_board
-        @board.ships.first.unset
-
-        put api_v1_board_url(@board), update_board_json
-      end
-
-      it "is a successful request" do
-        expect(response).to be_success
-      end
-
-      it "returns a 200" do
-        expect(response.status).to eq(200)
-      end
-
-      it "has set as many ships as possible, and returned links to the remaining ships to be set" do
-        expect(json["actions"][0]["href"]).to eq(api_v1_board_ship_url(@board, @board.ships.first))
-        expect(json["actions"].length).to eq(1)
       end
 
       it "is unlocked" do
         expect(json["state"]).to eq("unlocked")
+      end
+
+      it "has set as many ships as possible, and returned links to the remaining ships to be set" do
+        expect(json["actions"][0]["href"]).to eq(api_v1_board_ship_url(@board, @ship))
+        expect(json["actions"].length).to eq(1)
+      end
+    end
+
+    describe "When both boards are setup" do
+      def update_board_json
+        @board2.state = "lockable"
+        @board2.state = "locked"
+        { :format => :json, :board => @board2.to_json(:include => [:squares, :ships]) }
+      end
+
+      describe "When board is lockable" do
+        before(:each) do
+          @game   = setup_game
+          @board2 = @game.boards.last
+
+          put api_v1_board_url(@board2), update_board_json
+        end
+
+        it "is a successful request" do
+          expect(response).to be_success
+        end
+
+        it "returns a 200" do
+          expect(response.status).to eq(200)
+        end
+
+        it "is locked" do
+          expect(json["state"]).to eq("locked")
+        end
+
+        it "returns start game action" do
+          expect(json["actions"][0]["prompt"]).to eq("Player 1: Fire shot")
+        end
       end
     end
   end

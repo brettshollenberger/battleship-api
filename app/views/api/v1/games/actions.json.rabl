@@ -31,6 +31,16 @@ node(:actions) do |game|
     end
   end
 
+  if @game.play_phase?
+    @b = @game.updatable_squares.first.board
+    @game.updatable_squares.map do |square|
+      @actions.push({
+        :href   => api_v1_board_square_url(@b, square),
+        :rel    => "edit",
+        :prompt => "Player 1: Fire shot"
+      })
+    end
+  end
 
   @actions
 end
