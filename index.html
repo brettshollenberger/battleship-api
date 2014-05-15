@@ -1,0 +1,289 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Battleship API by brettshollenberger</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Battleship API</h1>
+        <p>Hypermedia API for Battleship Games</p>
+
+        <p class="view"><a href="https://github.com/brettshollenberger/battleship-api">View the Project on GitHub <small>brettshollenberger/battleship-api</small></a></p>
+
+
+        <ul>
+          <li><a href="https://github.com/brettshollenberger/battleship-api/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/brettshollenberger/battleship-api/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/brettshollenberger/battleship-api">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h1>
+<a name="games" class="anchor" href="#games"><span class="octicon octicon-link"></span></a>Games</h1>
+
+<h2>
+<a name="post-games" class="anchor" href="#post-games"><span class="octicon octicon-link"></span></a>POST /games</h2>
+
+<p>Create a new game. All available actions will be listed under the "actions" key. After creating a game, the only available action is to edit the name of the first player. Actions always have an <code>href</code> to use, a link relation (<code>rel</code>), which specifies the type of request you should make (<code>PUT</code> in this case), and a human-readable prompt you can display to the user.</p>
+
+<div class="highlight highlight-json"><pre><span class="p">{</span>
+    <span class="nt">"links"</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="nt">"href"</span><span class="p">:</span> <span class="s2">"http://localhost:3000/api/v1/games/7"</span><span class="p">,</span>
+            <span class="nt">"rel"</span><span class="p">:</span> <span class="s2">"self"</span>
+        <span class="p">}</span>
+    <span class="p">],</span>
+    <span class="nt">"actions"</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="nt">"href"</span><span class="p">:</span> <span class="s2">"http://localhost:3000/api/v1/games/7/players/13"</span><span class="p">,</span>
+            <span class="nt">"rel"</span><span class="p">:</span> <span class="s2">"edit"</span><span class="p">,</span>
+            <span class="nt">"prompt"</span><span class="p">:</span> <span class="s2">"Choose a name for Player 1"</span>
+        <span class="p">}</span>
+    <span class="p">],</span>
+    <span class="nt">"id"</span><span class="p">:</span> <span class="mi">7</span><span class="p">,</span>
+    <span class="nt">"phase"</span><span class="p">:</span> <span class="s2">"setup_players"</span><span class="p">,</span>
+    <span class="nt">"turn"</span><span class="p">:</span> <span class="mi">13</span><span class="p">,</span>
+    <span class="nt">"players"</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="nt">"links"</span><span class="p">:</span> <span class="p">[</span>
+                <span class="p">{</span>
+                    <span class="nt">"href"</span><span class="p">:</span> <span class="s2">"http://localhost:3000/api/v1/games/7/players/13"</span><span class="p">,</span>
+                    <span class="nt">"rel"</span><span class="p">:</span> <span class="s2">"self"</span>
+                <span class="p">},</span>
+                <span class="p">{</span>
+                    <span class="nt">"href"</span><span class="p">:</span> <span class="s2">"http://localhost:3000/api/v1/games/7/players/13"</span><span class="p">,</span>
+                    <span class="nt">"rel"</span><span class="p">:</span> <span class="s2">"edit"</span><span class="p">,</span>
+                    <span class="nt">"prompt"</span><span class="p">:</span> <span class="s2">"Choose a name for Player 1"</span>
+                <span class="p">}</span>
+            <span class="p">],</span>
+            <span class="nt">"name"</span><span class="p">:</span> <span class="kc">null</span><span class="p">,</span>
+            <span class="nt">"id"</span><span class="p">:</span> <span class="mi">13</span><span class="p">,</span>
+            <span class="nt">"board"</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">"links"</span><span class="p">:</span> <span class="p">[</span>
+                    <span class="p">{</span>
+                        <span class="nt">"href"</span><span class="p">:</span> <span class="s2">"http://localhost:3000/api/v1/boards/13"</span><span class="p">,</span>
+                        <span class="nt">"rel"</span><span class="p">:</span> <span class="s2">"self"</span>
+                    <span class="p">}</span>
+                <span class="p">],</span>
+                <span class="nt">"id"</span><span class="p">:</span> <span class="mi">13</span><span class="p">,</span>
+                <span class="nt">"state"</span><span class="p">:</span> <span class="s2">"unlocked"</span><span class="p">,</span>
+                <span class="nt">"ships"</span><span class="p">:</span> <span class="p">[</span>
+                    <span class="p">{</span>
+                        <span class="nt">"links"</span><span class="p">:</span> <span class="p">[</span>
+                            <span class="p">{</span>
+                                <span class="nt">"href"</span><span class="p">:</span> <span class="s2">"http://localhost:3000/api/v1/boards/13/ships/61"</span><span class="p">,</span>
+                                <span class="nt">"rel"</span><span class="p">:</span> <span class="s2">"self"</span>
+                            <span class="p">}</span>
+                        <span class="p">],</span>
+                        <span class="nt">"id"</span><span class="p">:</span> <span class="mi">61</span><span class="p">,</span>
+                        <span class="nt">"kind"</span><span class="p">:</span> <span class="s2">"aircraft carrier"</span><span class="p">,</span>
+                        <span class="nt">"state"</span><span class="p">:</span> <span class="s2">"unset"</span><span class="p">,</span>
+                        <span class="nt">"length"</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+                        <span class="nt">"squares"</span><span class="p">:</span> <span class="p">[]</span>
+                    <span class="p">}</span> <span class="err">...</span>
+                <span class="p">],</span>
+                <span class="nt">"squares"</span><span class="p">:</span> <span class="p">[</span>
+                    <span class="p">{</span>
+                        <span class="nt">"links"</span><span class="p">:</span> <span class="p">[</span>
+                            <span class="p">{</span>
+                                <span class="nt">"href"</span><span class="p">:</span> <span class="s2">"http://localhost:3000/api/v1/boards/13/squares/1201"</span><span class="p">,</span>
+                                <span class="nt">"rel"</span><span class="p">:</span> <span class="s2">"self"</span>
+                            <span class="p">}</span>
+                        <span class="p">],</span>
+                        <span class="nt">"id"</span><span class="p">:</span> <span class="mi">1201</span><span class="p">,</span>
+                        <span class="nt">"x"</span><span class="p">:</span> <span class="s2">"1"</span><span class="p">,</span>
+                        <span class="nt">"y"</span><span class="p">:</span> <span class="s2">"A"</span><span class="p">,</span>
+                        <span class="nt">"state"</span><span class="p">:</span> <span class="s2">"empty"</span>
+                    <span class="p">}</span> <span class="err">...</span>
+                 <span class="p">]</span>
+             <span class="p">}</span>
+         <span class="p">}</span>
+     <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+
+<h2>
+<a name="get-gamesid" class="anchor" href="#get-gamesid"><span class="octicon octicon-link"></span></a>GET /games/:id</h2>
+
+<p>Retrieve a game. You'll see the same response listed above.</p>
+
+<h1>
+<a name="players" class="anchor" href="#players"><span class="octicon octicon-link"></span></a>Players</h1>
+
+<h2>
+<a name="put-gamesgame_idplayersid" class="anchor" href="#put-gamesgame_idplayersid"><span class="octicon octicon-link"></span></a>PUT /games/:game_id/players/:id</h2>
+
+<div class="highlight highlight-json"><pre><span class="p">{</span><span class="nt">"player"</span><span class="p">:</span> <span class="p">{</span><span class="nt">"name"</span><span class="p">:</span> <span class="s2">"Brett"</span><span class="p">}}</span>
+</pre></div>
+
+<p>When you submit an edit request, you'll receive the following response. The available actions after both players have been setup will allow you to submit <code>PUT</code> requests for each ship to set its location on the board.</p>
+
+<div class="highlight highlight-json"><pre><span class="p">{</span>
+    <span class="nt">"actions"</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="nt">"href"</span><span class="p">:</span> <span class="s2">"http://localhost:3000/api/v1/boards/13/ships/61"</span><span class="p">,</span>
+            <span class="nt">"rel"</span><span class="p">:</span> <span class="s2">"edit"</span><span class="p">,</span>
+            <span class="nt">"prompt"</span><span class="p">:</span> <span class="s2">"Set ship for Player 1"</span>
+        <span class="p">},</span> <span class="err">...</span>
+    <span class="p">]</span>
+    <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"Brett"</span><span class="p">,</span>
+    <span class="nt">"id"</span><span class="p">:</span> <span class="mi">14</span><span class="p">,</span>
+    <span class="nt">"board"</span><span class="p">:</span> <span class="p">{</span><span class="err">...</span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+<h2>
+<a name="get-gamesgame_idplayersid" class="anchor" href="#get-gamesgame_idplayersid"><span class="octicon octicon-link"></span></a>GET /games/:game_id/players/:id</h2>
+
+<p>Retrieve a player. You'll see the same response listed above.</p>
+
+<h1>
+<a name="ships" class="anchor" href="#ships"><span class="octicon octicon-link"></span></a>Ships</h1>
+
+<h2>
+<a name="put-boardsboard_idshipsid" class="anchor" href="#put-boardsboard_idshipsid"><span class="octicon octicon-link"></span></a>PUT /boards/:board_id/ships/:id</h2>
+
+<div class="highlight highlight-json"><pre><span class="p">{</span><span class="nt">"ship"</span><span class="p">:</span> <span class="p">{</span><span class="nt">"squares"</span><span class="p">:</span> <span class="p">[{</span><span class="nt">"id"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="err">...</span><span class="p">}</span> <span class="p">{</span><span class="nt">"id"</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="err">...</span><span class="p">}]}}</span>
+</pre></div>
+
+<p>When it's time to set ships, you can simply send the ship with all of its associations listed. As long as the ship is settable to those squares, the ship will be set. Otherwise, you'll receive an error describing why the ship cannot be set. </p>
+
+<div class="highlight highlight-json"><pre><span class="p">{</span>
+    <span class="nt">"links"</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="nt">"href"</span><span class="p">:</span> <span class="s2">"http://localhost:3000/api/v1/boards/13/ships/65"</span><span class="p">,</span>
+            <span class="nt">"rel"</span><span class="p">:</span> <span class="s2">"self"</span>
+        <span class="p">}</span>
+    <span class="p">],</span>
+    <span class="nt">"id"</span><span class="p">:</span> <span class="mi">65</span><span class="p">,</span>
+    <span class="nt">"kind"</span><span class="p">:</span> <span class="s2">"patrol boat"</span><span class="p">,</span>
+    <span class="nt">"state"</span><span class="p">:</span> <span class="s2">"set"</span><span class="p">,</span>
+    <span class="nt">"length"</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="nt">"squares"</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="nt">"id"</span><span class="p">:</span> <span class="mi">1201</span><span class="p">,</span>
+            <span class="nt">"x"</span><span class="p">:</span> <span class="s2">"1"</span><span class="p">,</span>
+            <span class="nt">"y"</span><span class="p">:</span> <span class="s2">"A"</span><span class="p">,</span>
+            <span class="nt">"state"</span><span class="p">:</span> <span class="s2">"taken"</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="nt">"id"</span><span class="p">:</span> <span class="mi">1202</span><span class="p">,</span>
+            <span class="nt">"x"</span><span class="p">:</span> <span class="s2">"2"</span><span class="p">,</span>
+            <span class="nt">"y"</span><span class="p">:</span> <span class="s2">"A"</span><span class="p">,</span>
+            <span class="nt">"state"</span><span class="p">:</span> <span class="s2">"taken"</span>
+        <span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+
+<h2>
+<a name="get-boardsboard_idshipsid" class="anchor" href="#get-boardsboard_idshipsid"><span class="octicon octicon-link"></span></a>GET /boards/:board_id/ships/:id</h2>
+
+<p>Retrieve a ship. You'll see the same response listed above.</p>
+
+<h1>
+<a name="boards" class="anchor" href="#boards"><span class="octicon octicon-link"></span></a>Boards</h1>
+
+<h2>
+<a name="put-boardsid" class="anchor" href="#put-boardsid"><span class="octicon octicon-link"></span></a>PUT /boards/:id</h2>
+
+<div class="highlight highlight-json"><pre><span class="p">{</span><span class="nt">"board"</span><span class="p">:</span> <span class="p">{</span><span class="nt">"state"</span><span class="p">:</span> <span class="s2">"locked"</span><span class="p">,</span> <span class="nt">"squares"</span><span class="p">:</span> <span class="p">[{</span><span class="nt">"id"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="err">...</span><span class="p">}</span> <span class="p">{</span><span class="nt">"id"</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="err">...</span><span class="p">}],</span> <span class="nt">"ships"</span><span class="p">:</span> <span class="p">[{</span><span class="nt">"id"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="err">...</span><span class="p">}]}}</span>
+</pre></div>
+
+<p>You will receive an action to lock the board when all ships are set and do not overlap with one another. </p>
+
+<div class="highlight highlight-json"><pre><span class="s2">"actions"</span><span class="err">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="nt">"href"</span><span class="p">:</span> <span class="s2">"http://localhost:3000/api/v1/boards/10"</span><span class="p">,</span>
+            <span class="nt">"rel"</span><span class="p">:</span> <span class="s2">"edit"</span><span class="p">,</span>
+            <span class="nt">"prompt"</span><span class="p">:</span> <span class="s2">"Lock board"</span>
+        <span class="p">}</span> <span class="err">...</span>
+    <span class="p">]</span>
+</pre></div>
+
+<p>When you're ready to lock in all ships on a board for a player, you can submit a <code>PUT</code> request to <code>/boards/:id</code>. You can send all associations, and the board will make sure it has all ships set to the latest configuration. If all ships are set, the board will be locked. Otherwise, it will be returned unlocked. </p>
+
+<div class="highlight highlight-json"><pre><span class="p">{</span>
+    <span class="nt">"links"</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="nt">"href"</span><span class="p">:</span> <span class="s2">"http://localhost:3000/api/v1/boards/13"</span><span class="p">,</span>
+            <span class="nt">"rel"</span><span class="p">:</span> <span class="s2">"self"</span>
+        <span class="p">}</span>
+    <span class="p">],</span>
+    <span class="nt">"id"</span><span class="p">:</span> <span class="mi">13</span><span class="p">,</span>
+    <span class="nt">"state"</span><span class="p">:</span> <span class="s2">"unlocked"</span><span class="p">,</span>
+    <span class="nt">"ships"</span><span class="p">:</span> <span class="p">[</span><span class="err">...</span><span class="p">],</span>
+    <span class="nt">"squares"</span><span class="p">:</span> <span class="p">[</span><span class="err">...</span><span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+
+<h2>
+<a name="get-boardsid" class="anchor" href="#get-boardsid"><span class="octicon octicon-link"></span></a>GET /boards/:id</h2>
+
+<p>Retrieve a board. You'll see the same response listed above.</p>
+
+<h1>
+<a name="squares" class="anchor" href="#squares"><span class="octicon octicon-link"></span></a>Squares</h1>
+
+<h2>
+<a name="put-boardsboard_idsquaresid" class="anchor" href="#put-boardsboard_idsquaresid"><span class="octicon octicon-link"></span></a>PUT /boards/:board_id/squares/:id</h2>
+
+<div class="highlight highlight-json"><pre><span class="p">{</span><span class="nt">"square"</span><span class="p">:</span> <span class="p">{</span><span class="nt">"state"</span><span class="p">:</span> <span class="s2">"guessed"</span><span class="p">}}</span>
+</pre></div>
+
+<p>When both boards are locked into place, you'll begin receiving actions for users to make guesses.</p>
+
+<div class="highlight highlight-json"><pre><span class="s2">"actions"</span><span class="err">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="nt">"href"</span><span class="p">:</span> <span class="s2">"http://localhost:3000/api/v1/boards/10/squares/1"</span><span class="p">,</span>
+            <span class="nt">"rel"</span><span class="p">:</span> <span class="s2">"edit"</span><span class="p">,</span>
+            <span class="nt">"prompt"</span><span class="p">:</span> <span class="s2">"Player 1: Make guess"</span>
+        <span class="p">}</span> <span class="err">...</span> 
+    <span class="p">]</span>
+</pre></div>
+
+<p>The action will return the square's new state:</p>
+
+<div class="highlight highlight-json"><pre><span class="p">{</span>
+  <span class="nt">"links"</span><span class="p">:</span> <span class="p">[</span><span class="err">...</span><span class="p">],</span>
+  <span class="nt">"actions"</span><span class="p">:</span> <span class="p">[</span><span class="err">...</span><span class="p">],</span>
+  <span class="nt">"id"</span><span class="p">:</span> <span class="mi">1201</span><span class="p">,</span>
+  <span class="nt">"x"</span><span class="p">:</span> <span class="s2">"1"</span><span class="p">,</span>
+  <span class="nt">"y"</span><span class="p">:</span> <span class="s2">"A"</span><span class="p">,</span>
+  <span class="nt">"state"</span><span class="p">:</span> <span class="s2">"hit"</span>
+<span class="p">}</span>
+</pre></div>
+
+<h2>
+<a name="conclusion" class="anchor" href="#conclusion"><span class="octicon octicon-link"></span></a>Conclusion</h2>
+
+<p>When all ships have been sunk for a given player, you'll receive the following action:</p>
+
+<div class="highlight highlight-json"><pre><span class="s2">"actions"</span><span class="err">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="nt">"href"</span><span class="p">:</span> <span class="s2">"http://localhost:3000/api/v1/games"</span><span class="p">,</span>
+            <span class="nt">"rel"</span><span class="p">:</span> <span class="s2">"create"</span><span class="p">,</span>
+            <span class="nt">"prompt"</span><span class="p">:</span> <span class="s2">"Player 1 Victory! Play Again"</span>
+        <span class="p">}</span> <span class="err">...</span> 
+    <span class="p">]</span>
+</pre></div>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/brettshollenberger">brettshollenberger</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+    
+  </body>
+</html>
