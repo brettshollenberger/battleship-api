@@ -37,7 +37,7 @@ node(:actions) do |game|
       @actions.push({
         :href   => api_v1_board_square_url(@b, square),
         :rel    => "edit",
-        :prompt => "Player 1: Fire shot"
+        :prompt => "#{@game.players.find(@game.turn).player_number(@game)}: Fire shot"
       })
     end
   end

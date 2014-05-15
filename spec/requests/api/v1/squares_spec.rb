@@ -47,4 +47,36 @@ describe "Squares API :" do
       end
     end
   end
+
+  describe "Update Action :" do
+    def update_square_json
+      { :format => :json, :square => @square.to_json }
+    end
+
+    describe "When it is the Player's Turn" do
+      before(:each) do
+        @game   = game_in_play_mode
+        @board  = @game.boards.last
+        @square = @board.squares.first
+
+        put api_v1_board_square_url(@board, @square), update_square_json
+      end
+
+      it "is a successful request" do
+        expect(response).to be_success
+      end
+
+      it "returns a 200" do
+        expect(response.status).to eq(200)
+      end
+
+      it "responds with the updated square" do
+        expect(json["state"]).to eq("hit")
+      end
+
+      it "responds with the available actions" do
+        expect(json["actions"][0]["prompt"]).to eq("Player 2: Fire shot")
+      end
+    end
+  end
 end

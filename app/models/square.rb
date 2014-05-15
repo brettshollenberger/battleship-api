@@ -4,13 +4,21 @@ class Square < ActiveRecord::Base
   state_machine :state, :initial => :empty do
     state :empty
     state :taken
-    state :guessed
+    state :miss
     state :hit
   end
 
   belongs_to :board
   belongs_to :game
   belongs_to :ship
+
+  def guessed?
+    hit? || miss?
+  end
+
+  def player
+    board.player
+  end
 
   def fire
     update!(state: :hit)     if taken?

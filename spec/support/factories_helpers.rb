@@ -30,6 +30,14 @@ module FactoriesHelpers
     @game
   end
 
+  def game_in_play_mode
+    @game = setup_game
+    @game.boards.each { |board| board.state = "lockable"; board.state = "locked" }
+    @game.sync
+    @game.toggle_turn
+    @game
+  end
+
 private
   def set_board(board)
     @ship  = board.ships[4]

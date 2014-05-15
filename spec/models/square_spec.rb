@@ -27,6 +27,11 @@ describe Square do
     expect(square).to be_valid
   end
 
+  it "is valid with the state :miss" do
+    square.state = "miss"
+    expect(square).to be_valid
+  end
+
   it "is valid with the state :taken" do
     square.state = "taken"
     expect(square).to be_valid
@@ -35,6 +40,11 @@ describe Square do
   it "is not valid with some other state" do
     square.state = "filled"
     expect(square).to_not be_valid
+  end
+
+  it "is guessed if hit or missed" do
+    square.state = "hit"
+    expect(square.guessed?).to be_true
   end
 
   it "is not valid without a board" do
