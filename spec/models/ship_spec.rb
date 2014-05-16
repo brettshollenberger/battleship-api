@@ -2,15 +2,16 @@ require 'spec_helper'
 
 describe Ship do
   before(:each) do
-    @game  = FactoryGirl.create(:game)
-    @p1    = @game.players.first
-    @p2    = @game.players.last
-    @board = @game.boards.first
-    @ship  = @board.ships[4]
-    @ship2 = @board.ships[3]
-    @ship3 = @board.ships[2]
-    @ship4 = @board.ships[1]
-    @ship5 = @board.ships[0]
+    @game   = FactoryGirl.create(:game)
+    @p1     = @game.players.first
+    @p2     = @game.players.last
+    @board  = @game.boards.first
+    @board2 = @game.boards.last
+    @ship   = @board.ships[4]
+    @ship2  = @board.ships[3]
+    @ship3  = @board.ships[2]
+    @ship4  = @board.ships[1]
+    @ship5  = @board.ships[0]
   end
 
   it "is valid" do
@@ -83,7 +84,9 @@ describe Ship do
       @sq2 = @board.squares[1]
       @sq3 = @board.squares[2]
       @sq4 = @board.squares[3]
-      @sq5 = @board.squares[0]
+      @sq5 = @board.squares[4]
+
+      @sq1board1 = @board2.squares[0]
     end
 
     it "is valid if all assigned squares are contiguous" do
@@ -97,6 +100,19 @@ describe Ship do
       @ship.squares << @sq3
       @ship.valid?
       expect(@ship.errors[:squares]).to include("must be contiguous")
+    end
+
+    it "is valid if all assigned squares are on the same board" do
+      @ship.squares << @sq1
+      @ship.squares << @sq2
+      expect(@ship).to be_valid
+    end
+
+    it "is not valid if assigned squares are from different boards" do
+      @ship.squares << @sq1board1
+      @ship.squares << @sq2
+      @ship.valid?
+      expect(@ship.errors[:squares]).to include("must be on the same board")
     end
   end
 

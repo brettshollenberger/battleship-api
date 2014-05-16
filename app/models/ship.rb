@@ -7,38 +7,23 @@ class Ship < ActiveRecord::Base
   validates :state, :inclusion => { :in => ["unset", "set", "hit", "sunk"] }
 
   validate :contiguous_squares
+  validate :squares_on_the_same_board
 
   belongs_to :board
 
   has_many :squares do
-    def contiguous?
-      empty? ||
-        numerically_sequential? && same?(:y) || 
-        alphabetically_sequential? && same?(:x)
-    end
-
-    def sequential?(nums)
-      nums.sort.inject { |p, n| n == p + 1 ? n : -1 } != -1
-    end
-
-    def numerically_sequential?
-      sequential?(self.map { |sq| sq.x.to_i })
-    end
-
-    def alphabetically_sequential?
-      @alph = Hash[*("A".."Z").zip(1..26).flatten]
-      sequential?(self.map { |sq| @alph[sq.y] })
-    end
-
-    def same?(key)
-      self.map { |sq| sq.send(key) }.uniq.length == 1
-    end
+    include SquareSubset
   end
 
   accepts_nested_attributes_for :squares
 
   def contiguous_squares
     self.errors[:squares] << "must be contiguous" unless squares.contiguous?
+  end
+
+  def squares_on_the_same_board
+    self.errors[:squares] << "must be on the same board" unless 
+      squares.same?(:board) || squares.empty?
   end
 
   def sync
