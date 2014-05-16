@@ -14,7 +14,7 @@ module Api
         if @player.update(player_params)
           @game.sync
           @game.toggle_turn && @actionable = true if @player.setup?
-          @board = @player.board
+          @board = @player.board_for(@game)
           render "show", status: :ok
         end
       end

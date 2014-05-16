@@ -1,5 +1,6 @@
 class Square < ActiveRecord::Base
   validates_presence_of :x, :y, :board
+  # validate :settable_to_ship
 
   state_machine :state, :initial => :empty do
     state :empty
@@ -11,6 +12,14 @@ class Square < ActiveRecord::Base
   belongs_to :board
   belongs_to :game
   belongs_to :ship
+
+  # def settable_to_ship
+  #   errors.add(:state, "is already taken") unless settable_to_ship?
+  # end
+
+  # def settable_to_ship?
+  #   ship_id == nil || ship_id_was == nil || ship_id_was == ship_id
+  # end
 
   def guessed?
     hit? || miss?
