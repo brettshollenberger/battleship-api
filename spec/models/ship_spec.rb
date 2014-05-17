@@ -146,6 +146,27 @@ describe Ship do
     end
   end
 
+  describe "Getting Hit/Sunk :" do
+    before(:each) do
+      @sq1 = @board.squares[0]
+      @sq2 = @board.squares[1]
+      @ship.update(squares: [@sq1, @sq2])
+    end
+
+    it "is hit when any of its squares is hit" do
+      @sq1.state = "guessed"
+      @ship.save
+      expect(@ship.hit?).to eq(true)
+    end
+
+    it "is sunk when all of its squares are hit" do
+      @sq1.state = "guessed"
+      @sq2.state = "guessed"
+      @ship.save
+      expect(@ship.sunk?).to eq(true)
+    end
+  end
+
 #   describe "Setting Ships :" do
 #     before(:each) do
 #       @sq1 = @board.squares[0]

@@ -1,29 +1,62 @@
 class Ship < ActiveRecord::Base
   before_save :update_state
+
   validates_presence_of :board
-
-  validates :kind, :inclusion => { :in => ["aircraft carrier", "battleship", 
-                                           "submarine", "destroyer", "patrol boat"] }
-
-  validates :state, :inclusion => { :in => ["unset", "set", "hit", "sunk"] }
-
   validate :contiguous_squares
   validate :squares_on_the_same_board
   validate :number_of_squares
 
   belongs_to :board
-
   has_many :squares, :before_remove => :empty_square do
     include SquareSubset
   end
 
   accepts_nested_attributes_for :squares
 
+  state_machine :state, :initial => :unset do
+    state :unset
+    state :set
+    state :hit
+    state :sunk
+  end
+
+  state_machine :kind do
+    state "aircraft carrier" do
+      def length
+        5
+      end
+    end
+
+    state "battleship" do
+      def length
+        4
+      end
+    end
+
+    state "submarine" do
+      def length
+        3
+      end
+    end
+
+    state "destroyer" do
+      def length
+        3
+      end
+    end
+
+    state "patrol boat" do
+      def length
+        2
+      end
+    end
+  end
+
   def update_state
     write_attribute(:state, "unset") and return if squares.empty?
     write_attribute(:state, "set") and return   unless squares.empty? || squares.any?(&:hit?) 
-    write_attribute(:state, "hit") and return  if squares.any?(&:hit?)
     write_attribute(:state, "sunk") and return if squares.all?(&:hit?)
+    write_attribute(:state, "hit") and return  if squares.any?(&:hit?)
   end
 
   def sync
@@ -41,14 +74,6 @@ class Ship < ActiveRecord::Base
     update_attribute(:state, "unset")
   end
 
-  def unset?
-    state == "unset"
-  end
-
-  def sunk?
-    state == "sunk"
-  end
-
   def set(*sqs)
     squares.reload
     if board.settable?(ship: self, squares: sqs.flatten)
@@ -57,10 +82,6 @@ class Ship < ActiveRecord::Base
       update_attribute(:state, "set")
       sqs.flatten.each { |sq| sq.set_ship(self) }
     end
-  end
-
-  def set?
-    state == "set"
   end
 
   def correct_length?(squares)
@@ -103,38 +124,6 @@ class Ship < ActiveRecord::Base
 
   def add_reassignment_error(square)
     errors.add(:squares, reassignment_error(square))
-  end
-
-  state_machine :kind do
-    state "aircraft carrier" do
-      def length
-        5
-      end
-    end
-
-    state "battleship" do
-      def length
-        4
-      end
-    end
-
-    state "submarine" do
-      def length
-        3
-      end
-    end
-
-    state "destroyer" do
-      def length
-        3
-      end
-    end
-
-    state "patrol boat" do
-      def length
-        2
-      end
-    end
   end
 
 private

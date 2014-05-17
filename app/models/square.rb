@@ -5,6 +5,7 @@ class Square < ActiveRecord::Base
   state_machine :state, :initial => :empty do
     state :empty
     state :taken
+    state :guessed
     state :miss
     state :hit
   end
@@ -12,6 +13,15 @@ class Square < ActiveRecord::Base
   belongs_to :board
   belongs_to :game
   belongs_to :ship
+
+  def state=(value)
+    if value == "guessed"
+      write_attribute(:state, "miss") if empty?
+      write_attribute(:state, "hit") if taken?
+    else
+      write_attribute(:state, value)
+    end
+  end
 
   def update_state
     write_attribute(:state, "taken") if ship
