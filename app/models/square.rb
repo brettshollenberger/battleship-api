@@ -1,6 +1,6 @@
 class Square < ActiveRecord::Base
+  before_update :update_state
   validates_presence_of :x, :y, :board
-  # validate :settable_to_ship
 
   state_machine :state, :initial => :empty do
     state :empty
@@ -13,13 +13,10 @@ class Square < ActiveRecord::Base
   belongs_to :game
   belongs_to :ship
 
-  # def settable_to_ship
-  #   errors.add(:state, "is already taken") unless settable_to_ship?
-  # end
-
-  # def settable_to_ship?
-  #   ship_id == nil || ship_id_was == nil || ship_id_was == ship_id
-  # end
+  def update_state
+    write_attribute(:state, "taken") if ship
+    write_attribute(:state, "empty") unless ship
+  end
 
   def guessed?
     hit? || miss?
@@ -30,8 +27,8 @@ class Square < ActiveRecord::Base
   end
 
   def fire
-    update_attribute(:state, :hit)     if taken?
-    update_attribute(:state, :miss)    if empty?
+    update_attribute(:state, :hit)  if taken?
+    update_attribute(:state, :miss) if empty?
   end
 
   def set_ship(ship)

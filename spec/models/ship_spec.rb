@@ -114,6 +114,31 @@ describe Ship do
       @ship.valid?
       expect(@ship.errors[:squares]).to include("must be on the same board")
     end
+
+    it "is valid if set to the correct number of squares" do
+      @ship.squares << @sq1
+      @ship.squares << @sq2
+      expect(@ship).to be_valid
+    end
+
+    it "is not valid if set to the incorrect number of squares" do
+      @ship.squares << @sq1
+      @ship.squares << @sq2
+      @ship.squares << @sq3
+      @ship.valid?
+      expect(@ship.errors[:squares]).to include("cannot be greater than the length of the ship")
+    end
+
+    it "sets ships to 'taken'" do
+      @ship.update(squares: [@sq1, @sq2])
+      expect(@ship.squares.all?(&:taken?)).to eq(true)
+    end
+
+    it "unsets previously set squares" do
+      @ship.update(squares: [@sq1, @sq2])
+      @ship.update(squares: [@sq2, @sq3])
+      expect(@sq1.taken?).to eq(false)
+    end
   end
 
 #   describe "Setting Ships :" do

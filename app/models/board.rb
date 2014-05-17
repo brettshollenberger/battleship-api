@@ -1,4 +1,6 @@
 class Board < ActiveRecord::Base
+  after_create :setup
+
   belongs_to :game
   belongs_to :player
   has_many :squares
@@ -10,13 +12,13 @@ class Board < ActiveRecord::Base
 
   accepts_nested_attributes_for :ships
 
+  validates_associated :ships
+
   state_machine :state, :initial => :unlocked do
     state :unlocked
     state :lockable
     state :locked
   end
-
-  after_create :setup
 
   def state=(value)
     if unlocked? && value == "lockable" || lockable? && value == "locked" || value == "unlocked"

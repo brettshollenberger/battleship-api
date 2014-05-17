@@ -1,12 +1,15 @@
 module SquareSubset
   def contiguous?
-    empty? ||
-      numerically_sequential? && same?(:y) || 
+    numerically_sequential? && same?(:y) || 
       alphabetically_sequential? && same?(:x)
   end
 
   def same?(key)
     map { |square| square.send(key) }.uniq.length == 1
+  end
+
+  def was
+    owner.id ? Square.where(ship_id: owner.id) : self
   end
 
 private
@@ -24,5 +27,9 @@ private
 
   def letter_to_integer
     Hash[*("A".."Z").zip(1..26).flatten]
+  end
+
+  def owner
+    proxy_association.owner
   end
 end

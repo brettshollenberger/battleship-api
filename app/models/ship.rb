@@ -8,23 +8,15 @@ class Ship < ActiveRecord::Base
 
   validate :contiguous_squares
   validate :squares_on_the_same_board
+  validate :number_of_squares
 
   belongs_to :board
 
-  has_many :squares do
+  has_many :squares, :before_remove => :empty_square do
     include SquareSubset
   end
 
   accepts_nested_attributes_for :squares
-
-  def contiguous_squares
-    self.errors[:squares] << "must be contiguous" unless squares.contiguous?
-  end
-
-  def squares_on_the_same_board
-    self.errors[:squares] << "must be on the same board" unless 
-      squares.same?(:board) || squares.empty?
-  end
 
   def sync
     squares.reload
@@ -135,5 +127,37 @@ class Ship < ActiveRecord::Base
         2
       end
     end
+  end
+
+private
+  def empty_square(square)
+    square.update_attribute(:ship_id, nil)
+  end
+
+  def contiguous_squares
+    self.errors[:squares] << contiguous_squares_error unless 
+      squares.empty? || squares.contiguous?
+  end
+
+  def squares_on_the_same_board
+    self.errors[:squares] << squares_on_the_same_board_error unless 
+      squares.empty? || squares.same?(:board)
+  end
+
+  def number_of_squares
+    self.errors[:squares] << number_of_squares_error unless 
+      squares.empty? || squares.length == length
+  end
+
+  def contiguous_squares_error
+    "must be contiguous"
+  end
+
+  def squares_on_the_same_board_error
+    "must be on the same board"
+  end
+
+  def number_of_squares_error
+    "cannot be greater than the length of the ship" 
   end
 end
