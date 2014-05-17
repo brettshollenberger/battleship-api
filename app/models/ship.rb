@@ -155,6 +155,6 @@ private
   end
 
   def number_of_squares_error
-    "cannot be greater than the length of the ship" 
+    "must be set to #{length.to_words} squares" 
   end
 end

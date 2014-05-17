@@ -52,6 +52,29 @@ describe Square do
       square.board = nil
       expect(square).to_not be_valid
     end
+
+  end
+
+  describe "Being Set" do
+    before(:each) do
+      @game  = FactoryGirl.create(:game)
+      @board = @game.boards.first
+      @ship  = @board.ships[4]
+      @sq1   = @board.squares[0]
+      @sq2   = @board.squares[1]
+    end
+
+    it "is valid if it is its turn to be set" do
+      @ship.update(:squares => [@sq1, @sq2])
+      expect(@sq1).to be_valid
+    end
+
+    it "is not valid if it is not its turn to be set" do
+      @game.toggle_turn
+      @sq1.ship_id = @ship.id
+      @sq1.valid?
+      expect(@sq1.errors[:ship_id]).to include("cannot be set out of turn")
+    end
   end
 
   describe "Being Guessed" do

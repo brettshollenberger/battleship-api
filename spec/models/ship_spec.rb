@@ -90,43 +90,36 @@ describe Ship do
     end
 
     it "is valid if all assigned squares are contiguous" do
-      @ship.squares << @sq1
-      @ship.squares << @sq2
+      @ship.update(:squares => [@sq1, @sq2])
       expect(@ship).to be_valid
     end
 
     it "is not valid if all assigned squares are not contiguous" do
-      @ship.squares << @sq1
-      @ship.squares << @sq3
+      @ship.update(:squares => [@sq1, @sq3])
       @ship.valid?
       expect(@ship.errors[:squares]).to include("must be contiguous")
     end
 
     it "is valid if all assigned squares are on the same board" do
-      @ship.squares << @sq1
-      @ship.squares << @sq2
+      @ship.update(:squares => [@sq1, @sq2])
       expect(@ship).to be_valid
     end
 
     it "is not valid if assigned squares are from different boards" do
-      @ship.squares << @sq1board1
-      @ship.squares << @sq2
+      @ship.update(:squares => [@sq1board1, @sq2])
       @ship.valid?
       expect(@ship.errors[:squares]).to include("must be on the same board")
     end
 
     it "is valid if set to the correct number of squares" do
-      @ship.squares << @sq1
-      @ship.squares << @sq2
+      @ship.update(:squares => [@sq1, @sq2])
       expect(@ship).to be_valid
     end
 
     it "is not valid if set to the incorrect number of squares" do
-      @ship.squares << @sq1
-      @ship.squares << @sq2
-      @ship.squares << @sq3
+      @ship.update(:squares => [@sq1, @sq2, @sq3])
       @ship.valid?
-      expect(@ship.errors[:squares]).to include("cannot be greater than the length of the ship")
+      expect(@ship.errors[:squares]).to include("must be set to two squares")
     end
 
     it "sets state to 'set' when set to the correct number of squares" do

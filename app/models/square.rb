@@ -1,6 +1,7 @@
 class Square < ActiveRecord::Base
   before_save :update_state
   validates_presence_of :x, :y, :board
+  validate :turn_to_set, :if => :setting_to_ship?
 
   state_machine :state, :initial => :empty do
     state :empty
@@ -13,6 +14,18 @@ class Square < ActiveRecord::Base
   belongs_to :board
   belongs_to :game
   belongs_to :ship
+
+  def turn_to_set
+    self.errors[:ship_id] << turn_to_set_error unless player.turn?(game)
+  end
+
+  def setting_to_ship?
+    ship_id_changed?
+  end
+
+  def turn_to_set_error
+    "cannot be set out of turn"
+  end
 
   def state=(value)
     if value == "guessed"
