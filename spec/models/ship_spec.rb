@@ -129,6 +129,11 @@ describe Ship do
       expect(@ship.errors[:squares]).to include("cannot be greater than the length of the ship")
     end
 
+    it "sets state to 'set' when set to the correct number of squares" do
+      @ship.update(squares: [@sq1, @sq2])
+      expect(@ship.set?).to eq(true)
+    end
+
     it "sets ships to 'taken'" do
       @ship.update(squares: [@sq1, @sq2])
       expect(@ship.squares.all?(&:taken?)).to eq(true)

@@ -1,4 +1,5 @@
 class Ship < ActiveRecord::Base
+  before_save :update_state
   validates_presence_of :board
 
   validates :kind, :inclusion => { :in => ["aircraft carrier", "battleship", 
@@ -17,6 +18,13 @@ class Ship < ActiveRecord::Base
   end
 
   accepts_nested_attributes_for :squares
+
+  def update_state
+    write_attribute(:state, "unset") and return if squares.empty?
+    write_attribute(:state, "set") and return   unless squares.empty? || squares.any?(&:hit?) 
+    write_attribute(:state, "hit") and return  if squares.any?(&:hit?)
+    write_attribute(:state, "sunk") and return if squares.all?(&:hit?)
+  end
 
   def sync
     squares.reload

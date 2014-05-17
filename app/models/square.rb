@@ -1,5 +1,5 @@
 class Square < ActiveRecord::Base
-  before_update :update_state
+  before_save :update_state
   validates_presence_of :x, :y, :board
 
   state_machine :state, :initial => :empty do

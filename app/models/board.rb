@@ -1,5 +1,7 @@
 class Board < ActiveRecord::Base
   after_create :setup
+  before_save :save_ships
+  before_save :update_state
 
   belongs_to :game
   belongs_to :player
@@ -21,11 +23,10 @@ class Board < ActiveRecord::Base
   end
 
   def state=(value)
-    if unlocked? && value == "lockable" || lockable? && value == "locked" || value == "unlocked"
-      write_attribute(:state, value)
-    end
+    write_attribute(:state, value) if valid_state_transition?(value)
   end
 
+private
   def setup
     setup_squares
     setup_ships
@@ -45,39 +46,32 @@ class Board < ActiveRecord::Base
     end
   end
 
-  def get(y, x)
-    squares.where(x: x.to_s, y: y.to_s).first
+  def save_ships
+    ships.each(&:save)
   end
 
-  def settable?(opts={})
-    opts[:squares].all? { |sq| sq.settable_to?(opts[:ship]) } && 
-      opts[:ship].correct_length?(opts[:squares]) && same?(opts[:squares], :board) &&
-      this_board?(opts[:squares]) && opts[:ship].turn? && contiguous?(opts[:squares])
+  def update_state
+    unless locked?
+      write_attribute(:state, "lockable") if ships.set?
+      write_attribute(:state, "unlocked") unless ships.set?
+    end
   end
 
-  def contiguous?(*sqs)
-    numerically_sequential?(*sqs) && same?(*sqs, :y) || 
-    alphabetically_sequential?(*sqs) && same?(*sqs, :x)
+  def valid_state_transition?(value)
+    valid_transition_to_unlocked?(value) || 
+      valid_transition_to_lockable?(value) ||
+        valid_transition_to_locked?(value)
   end
 
-  def sequential?(nums)
-    nums.sort.inject { |p, n| n == p + 1 ? n : -1 } != -1
+  def valid_transition_to_unlocked?(value)
+    value == "unlocked"
   end
 
-  def numerically_sequential?(sqs)
-    sequential?(sqs.map { |sq| sq.x.to_i })
+  def valid_transition_to_lockable?(value)
+    unlocked? && value == "lockable"
   end
 
-  def alphabetically_sequential?(sqs)
-    @alph = Hash[*("A".."Z").zip(1..26).flatten]
-    sequential?(sqs.map { |sq| @alph[sq.y] })
-  end
-
-  def this_board?(sqs)
-    sqs.map { |sq| sq.board }.uniq.first == self
-  end
-
-  def same?(sqs, key)
-    sqs.map { |sq| sq.send(key) }.uniq.length == 1
+  def valid_transition_to_locked?(value)
+    lockable? && value == "locked"
   end
 end
