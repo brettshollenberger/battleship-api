@@ -1,8 +1,16 @@
 class Player < ActiveRecord::Base
+  after_initialize :setup_brain
   has_and_belongs_to_many :games
   has_many :boards
 
   validates_presence_of :name
+
+  def setup_brain
+    unless brain.nil?
+      Player.send :include, ("Robots::" + brain.to_s.classify).constantize
+      self.send(:set_robot_attributes)
+    end
+  end
 
   def board_for(game)
     boards.where(game: game).first

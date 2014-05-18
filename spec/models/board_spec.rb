@@ -56,30 +56,39 @@ describe Board do
     end
 
     describe "Locking" do
-      before(:each) do
-        @board.set.random
+      describe "Unlocked" do
+        it "is unlocked when not all ships are set" do
+          expect(@board.state).to eq("unlocked")
+        end
       end
 
-      it "is lockable when all ships are set" do
-        expect(@board.state).to eq("lockable")
-      end
+      describe "Lockable/Locked" do
+        before(:each) do
+          @board.set.random
+          @board.save
+        end
 
-      it "is unlocked when ships become unset" do
-        @ship.squares = []
-        @board.save
-        expect(@board.state).to eq("unlocked")
-      end
+        it "is lockable when all ships are set" do
+          expect(@board.state).to eq("lockable")
+        end
 
-      it "is locked when lockable and saved with locked" do
-        @board.state = "locked"
-        expect(@board.state).to eq("locked")
-      end
+        it "is unlocked when ships become unset" do
+          @ship.squares = []
+          @board.save
+          expect(@board.state).to eq("unlocked")
+        end
 
-      it "switches turns after locking" do
-        @board.state = "locked"
-        @board.save
-        @game.reload
-        expect(@game.turn).to eq(@player2.id)
+        it "is locked when lockable and saved with locked" do
+          @board.state = "locked"
+          expect(@board.state).to eq("locked")
+        end
+
+        it "switches turns after locking" do
+          @board.state = "locked"
+          @board.save
+          @game.reload
+          expect(@game.turn).to eq(@player2.id)
+        end
       end
     end
   end

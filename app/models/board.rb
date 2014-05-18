@@ -3,7 +3,7 @@ class Board < ActiveRecord::Base
 
   after_create :setup
   before_save :save_ships
-  before_save :update_state
+  after_save :update_state
   after_save :send_notifications
 
   belongs_to :game
@@ -11,7 +11,7 @@ class Board < ActiveRecord::Base
   has_many :squares
   has_many :ships do
     def set?
-      self.all? { |ship| ship.set? }
+      !empty? && all? { |ship| ship.set? }
     end
   end
 
