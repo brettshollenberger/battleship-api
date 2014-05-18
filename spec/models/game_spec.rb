@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Game do
 
   before(:each) do
-    @game    = FactoryGirl.create(:game)
+    @game    = FactoryGirl.create(:game, :with_players)
     @player1 = @game.players.first
     @player2 = @game.players.last
     @board   = @player1.board_for(@game)
@@ -55,6 +55,22 @@ describe Game do
     expect(@game.turn).to eq(@game.players.second.id)
     @game.toggle_turn
     expect(@game.turn).to eq(@game.players.first.id)
+  end
+
+  describe "Phases of the Game :" do
+    it "is in setup_players phase before it has players" do
+      @game = FactoryGirl.create(:game)
+      expect(@game.phase).to eq("setup_players")
+    end
+
+    it "enters setup_ships phase when it has two named players" do
+      expect(@game.phase).to eq("setup_ships")
+    end
+
+    it "enters play phase when both boards are locked" do
+      @game.boards.each(&:randomly_assign_ships)
+      expect(@game.phase).to eq("play")
+    end
   end
 
   # it "is complete when all ships are sunk for a player" do

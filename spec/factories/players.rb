@@ -3,6 +3,5 @@
 FactoryGirl.define do
   factory :player do
     name "Brett"
-    games { [FactoryGirl.create(:game)] }
   end
 end

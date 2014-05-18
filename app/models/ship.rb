@@ -1,11 +1,11 @@
 class Ship < ActiveRecord::Base
   before_save :update_state
-  before_save :update_game
+  before_save :notify_if_sunk
 
   validates_presence_of :board
-  validate :contiguous_squares
-  validate :squares_on_the_same_board
-  validate :number_of_squares
+  validate :validate_contiguous_squares
+  validate :validate_squares_on_the_same_board
+  validate :validate_number_of_squares
 
   belongs_to :board
   has_many :squares, :before_remove => :empty_square do
@@ -60,7 +60,7 @@ class Ship < ActiveRecord::Base
     write_attribute(:state, "hit") and return  if squares.any?(&:hit?)
   end
 
-  def update_game
+  def notify_if_sunk
     notify_observers :after_sunk if sunk?
   end
 
@@ -136,17 +136,17 @@ private
     square.update_attribute(:ship_id, nil)
   end
 
-  def contiguous_squares
+  def validate_contiguous_squares
     self.errors[:squares] << contiguous_squares_error unless 
       squares.empty? || squares.contiguous?
   end
 
-  def squares_on_the_same_board
+  def validate_squares_on_the_same_board
     self.errors[:squares] << squares_on_the_same_board_error unless 
       squares.empty? || squares.same?(:board)
   end
 
-  def number_of_squares
+  def validate_number_of_squares
     self.errors[:squares] << number_of_squares_error unless 
       squares.empty? || squares.length == length
   end

@@ -1,7 +1,11 @@
 class Game < ActiveRecord::Base
-  has_many :boards
   has_many :squares
-  has_and_belongs_to_many :players do
+  has_many :boards
+  has_and_belongs_to_many :players, 
+    :before_add => :validate_only_two_players,
+    :before_add => :add_board,
+    :after_add  => :begin_setup_ships_phase do
+
     def setup?
       self.all? { |player| player.setup? }
     end
@@ -12,14 +16,12 @@ class Game < ActiveRecord::Base
     state :setup_ships
     state :play
     state :complete
-  end
 
-  after_create :setup
+    event :players_setup do
+      transition :setup_players => :setup_ships
+    end
 
-  def setup
-    initialize_players
-    initialize_boards
-    initialize_turn
+    after_transition :setup_players => :setup_ships, :do => :player_ones_turn
   end
 
   def after_ship_sunk
@@ -78,19 +80,8 @@ class Game < ActiveRecord::Base
     players.find(not_turn).board_for(self).squares.reject(&:hit?).reject(&:miss?)
   end
 
-  def initialize_players
-    2.times do |n|
-      @p = Player.create
-      @gp = GamesPlayers.create(game: self, player: @p)
-    end
-  end
-
   def initialize_boards
     players.each { |p| boards.create(player: p, game: self) }
-  end
-
-  def initialize_turn
-    update_attribute(:turn, players.first.id)
   end
 
   def toggle_turn
@@ -103,5 +94,26 @@ class Game < ActiveRecord::Base
 
   def other_player(player)
     self.players.map { |p| p unless p == player }.compact.first
+  end
+
+private
+  def validate_only_two_players(player)
+    self.errors[:players] << only_two_players_error unless players.length <= 2
+  end
+
+  def only_two_players_error
+    "can only have two players" 
+  end
+
+  def add_board(player)
+    boards.create(:player => player)
+  end
+
+  def begin_setup_ships_phase(player)
+    players_setup if players.setup?
+  end
+
+  def player_ones_turn
+    update_attribute(:turn, players.first.id)
   end
 end
