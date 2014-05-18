@@ -68,7 +68,9 @@ describe Game do
     end
 
     it "enters play phase when both boards are locked" do
-      @game.boards.each(&:randomly_assign_ships)
+      @game.boards.each(&:set)
+      @game.boards.each(&:lock)
+      @game.reload
       expect(@game.phase).to eq("play")
     end
   end

@@ -79,15 +79,15 @@ class Ship < ActiveRecord::Base
     update_attribute(:state, "unset")
   end
 
-  def set(*sqs)
-    squares.reload
-    if board.settable?(ship: self, squares: sqs.flatten)
-      unset
-      clear_setting_errors
-      update_attribute(:state, "set")
-      sqs.flatten.each { |sq| sq.set_ship(self) }
-    end
-  end
+  # def set(*sqs)
+  #   squares.reload
+  #   if board.settable?(ship: self, squares: sqs.flatten)
+  #     unset
+  #     clear_setting_errors
+  #     update_attribute(:state, "set")
+  #     sqs.flatten.each { |sq| sq.set_ship(self) }
+  #   end
+  # end
 
   def correct_length?(squares)
     unless self.length == squares.length

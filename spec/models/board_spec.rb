@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Board do
   before(:each) do
-    @game    = FactoryGirl.create(:game)
+    @game    = FactoryGirl.create(:game, :with_players)
     @player  = @game.players.first
     @player2 = @game.players.last
     @board   = @player.board_for(@game)
@@ -100,6 +100,7 @@ describe Board do
 
       it "switches turns after locking" do
         @board.state = "locked"
+        @board.save
         @game.reload
         expect(@game.turn).to eq(@player2.id)
       end

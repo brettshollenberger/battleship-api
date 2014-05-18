@@ -9,5 +9,12 @@ FactoryGirl.define do
         2.times { game.players.create(:name => "Brett") }
       end
     end
+
+    trait :with_robot_enemy do
+      after(:create) do |game|
+        game.players.create(:name => "Brett")
+        game.players.create(:brain => :pip)
+      end
+    end
   end
 end

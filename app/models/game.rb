@@ -1,6 +1,11 @@
 class Game < ActiveRecord::Base
   has_many :squares
-  has_many :boards
+  has_many :boards do
+    def locked?
+      !empty? && all?(&:locked?)
+    end
+  end
+
   has_and_belongs_to_many :players, 
     :before_add => :validate_only_two_players,
     :before_add => :add_board,
@@ -21,6 +26,10 @@ class Game < ActiveRecord::Base
       transition :setup_players => :setup_ships
     end
 
+    event :boards_locked do
+      transition :setup_ships => :play
+    end
+
     after_transition :setup_players => :setup_ships, :do => :player_ones_turn
   end
 
@@ -29,6 +38,11 @@ class Game < ActiveRecord::Base
       update_attribute(:phase, "finished")
       update_attribute(:winner, find_winner)
     end
+  end
+
+  def after_board_locked(board)
+    boards_locked if boards.locked?
+    toggle_turn   if board.locked?
   end
 
   def ships

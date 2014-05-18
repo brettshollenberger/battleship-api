@@ -1,7 +1,10 @@
 class Board < ActiveRecord::Base
+  delegate :set, :to => :setter_proxy
+
   after_create :setup
   before_save :save_ships
   before_save :update_state
+  after_save :send_notifications
 
   belongs_to :game
   belongs_to :player
@@ -20,16 +23,29 @@ class Board < ActiveRecord::Base
     state :unlocked
     state :lockable
     state :locked
-  end
 
-  def state=(value)
-    if valid_state_transition?(value)
-      write_attribute(:state, value) 
-      notify_observers :after_state=
+    event :set do
+      transition :unlocked => :lockable
+    end
+
+    event :lock do
+      transition :lockable => :locked
     end
   end
 
 private
+  def send_notifications
+    notify_locked
+  end
+
+  def notify_locked
+    notify_observers :after_locked if locked?
+  end
+
+  def setter_proxy
+    Robots::Settable::SetterProxy.new({owner: self})
+  end
+
   def setup
     setup_squares
     setup_ships

@@ -1,7 +1,7 @@
 class BoardObserver < ActiveRecord::Observer
   observe :board
 
-  def after_state=(board)
-    board.game.toggle_turn if board.locked?
+  def after_locked(board)
+    board.game.after_board_locked(board)
   end
 end
