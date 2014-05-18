@@ -6,6 +6,7 @@ describe Game do
     @game    = FactoryGirl.create(:game)
     @player1 = @game.players.first
     @player2 = @game.players.last
+    @board   = @player1.board_for(@game)
   end
 
   it "is valid" do
@@ -56,66 +57,39 @@ describe Game do
     expect(@game.turn).to eq(@game.players.first.id)
   end
 
-  describe "controls" do
-    it "always contains a control to create a new game" do
-      expect(@game.controls).to include({rel: "post", item: "game"})
-    end
-
-    describe "setup players phase" do
-      it "has an initial control to setup the first player" do
-        expect(@game.controls).to include({rel: "edit", association: @game.players.first})
-      end
-
-      it "has a control to setup the second player after the first player is setup" do
-        @game.players.first.name = "Brett"
-        expect(@game.controls).to include({rel: "edit", association: @game.players.last})
-      end
-    end
-
-    describe "setup ships phase" do
-      before(:each) do
-        @player1.name = "Brett"
-        @player2.name = "Tag"
-      end
-
-      it "has controls to set the first player's ships after both players are setup" do
-        expect(@game.controls).to include({rel: "edit",
-                              association: @player1.board_for(@game).ships.first})
-
-        expect(@game.controls).to_not include({rel: "edit",
-                              association: @player2.board_for(@game).ships.first})
-      end
-
-      it "has controls to set P2's ships after the P1's ships are set" do
-        @player1.board_for(@game).ships.each(&:set)
-
-        expect(@game.controls).to include({rel: "edit",
-                              association: @player2.board_for(@game).ships.first})
-
-        expect(@game.controls).to_not include({rel: "edit",
-                              association: @player1.board_for(@game).ships.first})
-      end
-    end
-
-    describe "play phase" do
-      before(:each) do
-        @player1.name = "Brett"
-        @player2.name = "Tag"
-        @player1.board_for(@game).ships.each(&:set)
-        @player2.board_for(@game).ships.each(&:set)
-      end
-
-      it "has a control for P1 to fire a shot on P2's board after the ships are set" do
-        expect(@game.controls).to include({rel: "edit",
-                                   association: @player2.board_for(@game).squares.first})
-      end
-
-      it "has a control for P2 to fire a shot after P1's turn" do
-        @square = @player2.board_for(@game).squares.first
-        @player1.fire(@square) && @game.toggle_turn
-        expect(@game.controls).to include({rel: "edit",
-                                   association: @player1.board_for(@game).squares.first})
-      end
-    end
-  end
+  # it "is complete when all ships are sunk for a player" do
+  #   @ship          = @board.ships[4]
+  #   @ship2         = @board.ships[3]
+  #   @ship3         = @board.ships[2]
+  #   @ship4         = @board.ships[1]
+  #   @ship5         = @board.ships[0]
+  #   @sq1           = @board.squares[0]
+  #   @sq2           = @board.squares[1]
+  #   @sq3           = @board.squares[2]
+  #   @sq4           = @board.squares[3]
+  #   @sq5           = @board.squares[4]
+  #   @sq6           = @board.squares[5]
+  #   @sq7           = @board.squares[6]
+  #   @sq8           = @board.squares[10]
+  #   @sq9           = @board.squares[11]
+  #   @sq10          = @board.squares[12]
+  #   @sq11          = @board.squares[13]
+  #   @sq12          = @board.squares[20]
+  #   @sq13          = @board.squares[21]
+  #   @sq14          = @board.squares[22]
+  #   @sq15          = @board.squares[23]
+  #   @sq16          = @board.squares[24]
+  #   @ship.squares  = [@sq1, @sq2]
+  #   @ship2.squares = [@sq2, @sq3, @sq4]
+  #   @ship3.squares = [@sq5, @sq6, @sq7]
+  #   @ship4.squares = [@sq8, @sq9, @sq10, @sq11]
+  #   @ship5.squares = [@sq12, @sq13, @sq14, @sq15, @sq16]
+  #   [@ship, @ship2, @ship3, @ship4, @ship5].each(&:save)
+  #   @player1.ships_for(@game).each do |ship|
+  #     ship.squares.each { |square| square.state = "guessed" }
+  #     ship.save
+  #   end
+  #   @game.reload
+  #   expect(@game.phase).to eq("complete")
+  # end
 end

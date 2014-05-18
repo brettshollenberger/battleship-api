@@ -1,5 +1,6 @@
 class Ship < ActiveRecord::Base
   before_save :update_state
+  before_save :update_game
 
   validates_presence_of :board
   validate :contiguous_squares
@@ -57,6 +58,10 @@ class Ship < ActiveRecord::Base
     write_attribute(:state, "set") and return   unless squares.empty? || squares.any?(&:hit?) 
     write_attribute(:state, "sunk") and return if squares.all?(&:hit?)
     write_attribute(:state, "hit") and return  if squares.any?(&:hit?)
+  end
+
+  def update_game
+    notify_observers :after_sunk if sunk?
   end
 
   def sync

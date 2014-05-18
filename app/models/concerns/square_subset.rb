@@ -8,10 +8,6 @@ module SquareSubset
     map { |square| square.send(key) }.uniq.length == 1
   end
 
-  def was
-    owner.id ? Square.where(ship_id: owner.id) : self
-  end
-
 private
   def numerically_sequential?
     sequential? map { |sq| sq.x.to_i }
@@ -27,9 +23,5 @@ private
 
   def letter_to_integer
     Hash[*("A".."Z").zip(1..26).flatten]
-  end
-
-  def owner
-    proxy_association.owner
   end
 end

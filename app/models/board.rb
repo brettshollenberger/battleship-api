@@ -23,7 +23,10 @@ class Board < ActiveRecord::Base
   end
 
   def state=(value)
-    write_attribute(:state, value) if valid_state_transition?(value)
+    if valid_state_transition?(value)
+      write_attribute(:state, value) 
+      notify_observers :after_state=
+    end
   end
 
 private
