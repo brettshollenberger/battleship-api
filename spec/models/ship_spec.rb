@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Ship do
   before(:each) do
-    @game   = FactoryGirl.create(:game)
+    @game   = FactoryGirl.create(:game, :with_players)
     @p1     = @game.players.first
     @p2     = @game.players.last
     @board  = @game.boards.first

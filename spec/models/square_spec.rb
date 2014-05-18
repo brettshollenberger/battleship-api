@@ -57,7 +57,7 @@ describe Square do
 
   describe "Being Guessed" do
     before(:each) do
-      @game  = FactoryGirl.create(:game)
+      @game  = FactoryGirl.create(:game, :with_players)
       @board = @game.boards.first
       @ship  = @board.ships[4]
       @sq1   = @board.squares[0]

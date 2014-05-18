@@ -1,6 +1,6 @@
 class Ship < ActiveRecord::Base
   before_save :update_state
-  before_save :notify_if_sunk
+  after_save :notify_if_sunk
 
   validates_presence_of :board
   validate :validate_contiguous_squares
@@ -19,6 +19,10 @@ class Ship < ActiveRecord::Base
     state :set
     state :hit
     state :sunk
+
+    event :sink do
+      transition any => :sunk
+    end
   end
 
   state_machine :kind do
@@ -51,6 +55,10 @@ class Ship < ActiveRecord::Base
         2
       end
     end
+  end
+
+  def after_square_hit(square)
+    save
   end
 
   def update_state

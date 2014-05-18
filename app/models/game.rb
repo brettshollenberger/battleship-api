@@ -33,9 +33,12 @@ class Game < ActiveRecord::Base
     after_transition :setup_players => :setup_ships, :do => :player_ones_turn
   end
 
+  accepts_nested_attributes_for :squares
+  accepts_nested_attributes_for :boards
+
   def after_ship_sunk
     if finished_phase?
-      update_attribute(:phase, "finished")
+      update_attribute(:phase, "complete")
       update_attribute(:winner, find_winner)
     end
   end
@@ -75,7 +78,7 @@ class Game < ActiveRecord::Base
   end
 
   def finished_phase?
-    players.any? { |player| player.ships_for(self).all?(&:sunk?) }
+    players(true).any? { |player| player.ships_for(self).all?(&:sunk?) }
   end
 
   def find_winner

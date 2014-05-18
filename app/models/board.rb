@@ -16,6 +16,7 @@ class Board < ActiveRecord::Base
   end
 
   accepts_nested_attributes_for :ships
+  accepts_nested_attributes_for :squares
 
   validates_associated :ships
 

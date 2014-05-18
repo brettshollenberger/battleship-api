@@ -1,5 +1,6 @@
 class Square < ActiveRecord::Base
   before_save :update_state
+  after_save  :send_notifications
   validates_presence_of :x, :y, :board
 
   state_machine :state, :initial => :empty do
@@ -14,6 +15,10 @@ class Square < ActiveRecord::Base
   belongs_to :game
   belongs_to :ship
 
+  def send_notifications
+    notify_observers :after_hit if hit?
+  end
+
   def state=(value)
     if value == "guessed"
       write_attribute(:state, "miss") if empty?
@@ -24,8 +29,10 @@ class Square < ActiveRecord::Base
   end
 
   def update_state
-    write_attribute(:state, "taken") if ship
-    write_attribute(:state, "empty") unless ship
+    unless guessed?
+      write_attribute(:state, "taken") if ship
+      write_attribute(:state, "empty") unless ship
+    end
   end
 
   def guessed?

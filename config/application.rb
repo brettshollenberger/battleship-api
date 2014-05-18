@@ -23,7 +23,9 @@ module Battleship
       g.test_framework :rspec
     end
 
-    config.active_record.observers = :board_observer, :ship_observer
+    config.active_record.observers = :board_observer,
+                                     :ship_observer,
+                                     :square_observer
 
     Rabl.configure do |config|
       config.include_json_root  = false
