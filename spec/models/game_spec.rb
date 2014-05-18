@@ -78,11 +78,11 @@ describe Game do
       @game.boards.each(&:set)
       @game.boards.each(&:lock)
       @game.boards.first.squares.each do |square| 
-        square.state = "guessed"
-        square.save
+        square.update(:state => "guessed")
       end
       @game.reload
       expect(@game.phase).to eq("complete")
+      expect(@game.winner).to eq(@player2.id)
     end
   end
 end

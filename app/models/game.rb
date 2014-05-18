@@ -30,17 +30,19 @@ class Game < ActiveRecord::Base
       transition :setup_ships => :play
     end
 
+    event :game_complete do
+      transition :play => :complete
+    end
+
     after_transition :setup_players => :setup_ships, :do => :player_ones_turn
+    after_transition :play => :complete, :do => :update_winner
   end
 
   accepts_nested_attributes_for :squares
   accepts_nested_attributes_for :boards
 
   def after_ship_sunk
-    if finished_phase?
-      update_attribute(:phase, "complete")
-      update_attribute(:winner, find_winner)
-    end
+    game_complete if finished_phase?
   end
 
   def after_board_locked(board)
@@ -81,10 +83,6 @@ class Game < ActiveRecord::Base
     players(true).any? { |player| player.ships_for(self).all?(&:sunk?) }
   end
 
-  def find_winner
-    other_player(players.map { |player| player.ships_for(self).all?(&:sunk?) }.first).id
-  end
-
   def updatable_players
     setup_player_phase? ? players.where(id: turn) : []
   end
@@ -95,10 +93,6 @@ class Game < ActiveRecord::Base
 
   def updatable_squares
     players.find(not_turn).board_for(self).squares.reject(&:hit?).reject(&:miss?)
-  end
-
-  def initialize_boards
-    players.each { |p| boards.create(player: p, game: self) }
   end
 
   def toggle_turn
@@ -132,5 +126,15 @@ private
 
   def player_ones_turn
     update_attribute(:turn, players.first.id)
+  end
+
+  def update_winner
+    update_attribute(:winner, find_winner)
+  end
+
+  def find_winner
+    other_player(players.map do |player| 
+      player if player.ships_for(self).all?(&:sunk?) 
+    end.compact.first).id
   end
 end
